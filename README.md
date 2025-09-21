@@ -30,7 +30,7 @@ o |  | o                         x
 
 Trabalho desenvolvido para a disciplina INF01151 - Sistemas Operacionais II
 
-Professor: Éder John Scheid
+Professor: Eder John Scheid
 
 Integrantes:
 - Álvaro Guglielmin Becker
