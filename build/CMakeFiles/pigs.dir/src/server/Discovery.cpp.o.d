@@ -1,7 +1,8 @@
-CMakeFiles/pigs.dir/src/server/Server.cpp.o: \
- /mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/src/server/Server.cpp \
- /usr/include/stdc-predef.h /usr/include/c++/13/iostream \
- /usr/include/c++/13/bits/requires_hosted.h \
+CMakeFiles/pigs.dir/src/server/Discovery.cpp.o: \
+ /mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/src/server/Discovery.cpp \
+ /usr/include/stdc-predef.h \
+ /mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/src/server/Discovery.h \
+ /usr/include/c++/13/iostream /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -149,11 +150,9 @@ CMakeFiles/pigs.dir/src/server/Server.cpp.o: \
  /usr/include/c++/13/bits/locale_facets.tcc \
  /usr/include/c++/13/bits/basic_ios.tcc \
  /usr/include/c++/13/bits/ostream.tcc /usr/include/c++/13/istream \
- /usr/include/c++/13/bits/istream.tcc \
- /mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/src/server/Interface.h \
- /mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/src/server/Discovery.h \
- /usr/include/c++/13/chrono /usr/include/c++/13/bits/chrono.h \
- /usr/include/c++/13/ratio /usr/include/c++/13/cstdint \
+ /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/chrono \
+ /usr/include/c++/13/bits/chrono.h /usr/include/c++/13/ratio \
+ /usr/include/c++/13/cstdint \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \

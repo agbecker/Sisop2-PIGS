@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/src/server/Discovery.cpp" "CMakeFiles/pigs.dir/src/server/Discovery.cpp.o" "gcc" "CMakeFiles/pigs.dir/src/server/Discovery.cpp.o.d"
   "/mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/src/server/Interface.cpp" "CMakeFiles/pigs.dir/src/server/Interface.cpp.o" "gcc" "CMakeFiles/pigs.dir/src/server/Interface.cpp.o.d"
   "/mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/src/server/Server.cpp" "CMakeFiles/pigs.dir/src/server/Server.cpp.o" "gcc" "CMakeFiles/pigs.dir/src/server/Server.cpp.o.d"
   )

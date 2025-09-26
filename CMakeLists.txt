@@ -12,6 +12,8 @@ add_executable(pigs
     src/server/Server.cpp
     src/server/Interface.h
     src/server/Interface.cpp
+    src/server/Discovery.h
+    src/server/Discovery.cpp
 )
 
 # no Linux é comum precisar linkar a biblioteca de threads

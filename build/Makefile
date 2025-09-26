@@ -129,6 +129,30 @@ pigs/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/build
 .PHONY : pigs/fast
 
+src/server/Discovery.o: src/server/Discovery.cpp.o
+.PHONY : src/server/Discovery.o
+
+# target to build an object file
+src/server/Discovery.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/src/server/Discovery.cpp.o
+.PHONY : src/server/Discovery.cpp.o
+
+src/server/Discovery.i: src/server/Discovery.cpp.i
+.PHONY : src/server/Discovery.i
+
+# target to preprocess a source file
+src/server/Discovery.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/src/server/Discovery.cpp.i
+.PHONY : src/server/Discovery.cpp.i
+
+src/server/Discovery.s: src/server/Discovery.cpp.s
+.PHONY : src/server/Discovery.s
+
+# target to generate assembly for a file
+src/server/Discovery.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/src/server/Discovery.cpp.s
+.PHONY : src/server/Discovery.cpp.s
+
 src/server/Interface.o: src/server/Interface.cpp.o
 .PHONY : src/server/Interface.o
 
@@ -186,6 +210,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... pigs"
+	@echo "... src/server/Discovery.o"
+	@echo "... src/server/Discovery.i"
+	@echo "... src/server/Discovery.s"
 	@echo "... src/server/Interface.o"
 	@echo "... src/server/Interface.i"
 	@echo "... src/server/Interface.s"
