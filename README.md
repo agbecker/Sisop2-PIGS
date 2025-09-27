@@ -54,3 +54,12 @@ Depois, para cada input do usuário, espera até receber resposta do servidor (o
 - `Interface` é uma thread única, que cuida uma fila de eventos. Se a fila não estiver vazia, trava ela, remove o evento na cabeça, destrava, e imprime seu status corretamente.
 - `Discovery` tem uma thread principal que cuida o socket. Quando recebe uma mensagem, cria uma nova thread e passa o IP para ela. A nova thread bloqueia a lista de usuários, adiciona um novo usuário a ela, desbloqueia, e envia a resposta com o IP ao usuário.
 - `Process` tem uma thread principal que cuida o socket. Quando recebe uma mensagem, cria uma nova thread e passa a mensagem para ela. A nova thread valida a mensagem, trava os usuários relevantes na lista, tenta efetuar a transferência, destrava e manda mensagem com o resultado ao usuário que pediu.
+
+---
+# Tutorial de compilação e uso
+
+Pelo terminal, acessar a pasta `build`.
+
+Usar os comandos `cmake ..` e depois `cmake --build .`
+
+O arquivo servidor estará disponível como `server_pigs`, e o cliente como `client_pigs`.
