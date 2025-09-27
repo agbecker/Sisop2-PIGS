@@ -2,5 +2,6 @@
 
 
 int main() {
+    discoverServer();
     return 0;
 }
