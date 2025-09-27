@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/pigs.dir/src/server/Server.cpp.o CMakeFiles/pigs.dir/src/server/Interface.cpp.o CMakeFiles/pigs.dir/src/server/Discovery.cpp.o -o pigs 
