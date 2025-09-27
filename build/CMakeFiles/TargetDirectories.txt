@@ -1,3 +1,4 @@
-/mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build/CMakeFiles/pigs.dir
+/mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build/CMakeFiles/server_pigs.dir
+/mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build/CMakeFiles/client_pigs.dir
 /mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build/CMakeFiles/edit_cache.dir
 /mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build/CMakeFiles/rebuild_cache.dir

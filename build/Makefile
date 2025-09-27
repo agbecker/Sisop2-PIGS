@@ -117,24 +117,133 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named pigs
+# Target rules for targets named server_pigs
 
 # Build rule for target.
-pigs: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 pigs
-.PHONY : pigs
+server_pigs: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server_pigs
+.PHONY : server_pigs
 
 # fast build rule for target.
-pigs/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/build
-.PHONY : pigs/fast
+server_pigs/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/build
+.PHONY : server_pigs/fast
+
+#=============================================================================
+# Target rules for targets named client_pigs
+
+# Build rule for target.
+client_pigs: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 client_pigs
+.PHONY : client_pigs
+
+# fast build rule for target.
+client_pigs/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/build
+.PHONY : client_pigs/fast
+
+src/client/Client.o: src/client/Client.cpp.o
+.PHONY : src/client/Client.o
+
+# target to build an object file
+src/client/Client.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/src/client/Client.cpp.o
+.PHONY : src/client/Client.cpp.o
+
+src/client/Client.i: src/client/Client.cpp.i
+.PHONY : src/client/Client.i
+
+# target to preprocess a source file
+src/client/Client.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/src/client/Client.cpp.i
+.PHONY : src/client/Client.cpp.i
+
+src/client/Client.s: src/client/Client.cpp.s
+.PHONY : src/client/Client.s
+
+# target to generate assembly for a file
+src/client/Client.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/src/client/Client.cpp.s
+.PHONY : src/client/Client.cpp.s
+
+src/client/Discovery.o: src/client/Discovery.cpp.o
+.PHONY : src/client/Discovery.o
+
+# target to build an object file
+src/client/Discovery.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/src/client/Discovery.cpp.o
+.PHONY : src/client/Discovery.cpp.o
+
+src/client/Discovery.i: src/client/Discovery.cpp.i
+.PHONY : src/client/Discovery.i
+
+# target to preprocess a source file
+src/client/Discovery.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/src/client/Discovery.cpp.i
+.PHONY : src/client/Discovery.cpp.i
+
+src/client/Discovery.s: src/client/Discovery.cpp.s
+.PHONY : src/client/Discovery.s
+
+# target to generate assembly for a file
+src/client/Discovery.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/src/client/Discovery.cpp.s
+.PHONY : src/client/Discovery.cpp.s
+
+src/client/Interface.o: src/client/Interface.cpp.o
+.PHONY : src/client/Interface.o
+
+# target to build an object file
+src/client/Interface.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/src/client/Interface.cpp.o
+.PHONY : src/client/Interface.cpp.o
+
+src/client/Interface.i: src/client/Interface.cpp.i
+.PHONY : src/client/Interface.i
+
+# target to preprocess a source file
+src/client/Interface.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/src/client/Interface.cpp.i
+.PHONY : src/client/Interface.cpp.i
+
+src/client/Interface.s: src/client/Interface.cpp.s
+.PHONY : src/client/Interface.s
+
+# target to generate assembly for a file
+src/client/Interface.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/src/client/Interface.cpp.s
+.PHONY : src/client/Interface.cpp.s
+
+src/client/Process.o: src/client/Process.cpp.o
+.PHONY : src/client/Process.o
+
+# target to build an object file
+src/client/Process.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/src/client/Process.cpp.o
+.PHONY : src/client/Process.cpp.o
+
+src/client/Process.i: src/client/Process.cpp.i
+.PHONY : src/client/Process.i
+
+# target to preprocess a source file
+src/client/Process.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/src/client/Process.cpp.i
+.PHONY : src/client/Process.cpp.i
+
+src/client/Process.s: src/client/Process.cpp.s
+.PHONY : src/client/Process.s
+
+# target to generate assembly for a file
+src/client/Process.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/src/client/Process.cpp.s
+.PHONY : src/client/Process.cpp.s
 
 src/server/Discovery.o: src/server/Discovery.cpp.o
 .PHONY : src/server/Discovery.o
 
 # target to build an object file
 src/server/Discovery.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/src/server/Discovery.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/src/server/Discovery.cpp.o
 .PHONY : src/server/Discovery.cpp.o
 
 src/server/Discovery.i: src/server/Discovery.cpp.i
@@ -142,7 +251,7 @@ src/server/Discovery.i: src/server/Discovery.cpp.i
 
 # target to preprocess a source file
 src/server/Discovery.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/src/server/Discovery.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/src/server/Discovery.cpp.i
 .PHONY : src/server/Discovery.cpp.i
 
 src/server/Discovery.s: src/server/Discovery.cpp.s
@@ -150,7 +259,7 @@ src/server/Discovery.s: src/server/Discovery.cpp.s
 
 # target to generate assembly for a file
 src/server/Discovery.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/src/server/Discovery.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/src/server/Discovery.cpp.s
 .PHONY : src/server/Discovery.cpp.s
 
 src/server/Interface.o: src/server/Interface.cpp.o
@@ -158,7 +267,7 @@ src/server/Interface.o: src/server/Interface.cpp.o
 
 # target to build an object file
 src/server/Interface.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/src/server/Interface.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/src/server/Interface.cpp.o
 .PHONY : src/server/Interface.cpp.o
 
 src/server/Interface.i: src/server/Interface.cpp.i
@@ -166,7 +275,7 @@ src/server/Interface.i: src/server/Interface.cpp.i
 
 # target to preprocess a source file
 src/server/Interface.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/src/server/Interface.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/src/server/Interface.cpp.i
 .PHONY : src/server/Interface.cpp.i
 
 src/server/Interface.s: src/server/Interface.cpp.s
@@ -174,15 +283,39 @@ src/server/Interface.s: src/server/Interface.cpp.s
 
 # target to generate assembly for a file
 src/server/Interface.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/src/server/Interface.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/src/server/Interface.cpp.s
 .PHONY : src/server/Interface.cpp.s
+
+src/server/Process.o: src/server/Process.cpp.o
+.PHONY : src/server/Process.o
+
+# target to build an object file
+src/server/Process.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/src/server/Process.cpp.o
+.PHONY : src/server/Process.cpp.o
+
+src/server/Process.i: src/server/Process.cpp.i
+.PHONY : src/server/Process.i
+
+# target to preprocess a source file
+src/server/Process.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/src/server/Process.cpp.i
+.PHONY : src/server/Process.cpp.i
+
+src/server/Process.s: src/server/Process.cpp.s
+.PHONY : src/server/Process.s
+
+# target to generate assembly for a file
+src/server/Process.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/src/server/Process.cpp.s
+.PHONY : src/server/Process.cpp.s
 
 src/server/Server.o: src/server/Server.cpp.o
 .PHONY : src/server/Server.o
 
 # target to build an object file
 src/server/Server.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/src/server/Server.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/src/server/Server.cpp.o
 .PHONY : src/server/Server.cpp.o
 
 src/server/Server.i: src/server/Server.cpp.i
@@ -190,7 +323,7 @@ src/server/Server.i: src/server/Server.cpp.i
 
 # target to preprocess a source file
 src/server/Server.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/src/server/Server.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/src/server/Server.cpp.i
 .PHONY : src/server/Server.cpp.i
 
 src/server/Server.s: src/server/Server.cpp.s
@@ -198,7 +331,7 @@ src/server/Server.s: src/server/Server.cpp.s
 
 # target to generate assembly for a file
 src/server/Server.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/src/server/Server.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/src/server/Server.cpp.s
 .PHONY : src/server/Server.cpp.s
 
 # Help Target
@@ -209,13 +342,29 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... pigs"
+	@echo "... client_pigs"
+	@echo "... server_pigs"
+	@echo "... src/client/Client.o"
+	@echo "... src/client/Client.i"
+	@echo "... src/client/Client.s"
+	@echo "... src/client/Discovery.o"
+	@echo "... src/client/Discovery.i"
+	@echo "... src/client/Discovery.s"
+	@echo "... src/client/Interface.o"
+	@echo "... src/client/Interface.i"
+	@echo "... src/client/Interface.s"
+	@echo "... src/client/Process.o"
+	@echo "... src/client/Process.i"
+	@echo "... src/client/Process.s"
 	@echo "... src/server/Discovery.o"
 	@echo "... src/server/Discovery.i"
 	@echo "... src/server/Discovery.s"
 	@echo "... src/server/Interface.o"
 	@echo "... src/server/Interface.i"
 	@echo "... src/server/Interface.s"
+	@echo "... src/server/Process.o"
+	@echo "... src/server/Process.i"
+	@echo "... src/server/Process.s"
 	@echo "... src/server/Server.o"
 	@echo "... src/server/Server.i"
 	@echo "... src/server/Server.s"

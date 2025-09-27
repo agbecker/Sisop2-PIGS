@@ -63,7 +63,8 @@ CMAKE_BINARY_DIR = /mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/pigs.dir/all
+all: CMakeFiles/server_pigs.dir/all
+all: CMakeFiles/client_pigs.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -71,34 +72,61 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/pigs.dir/clean
+clean: CMakeFiles/server_pigs.dir/clean
+clean: CMakeFiles/client_pigs.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/pigs.dir
+# Target rules for target CMakeFiles/server_pigs.dir
 
 # All Build rule for target.
-CMakeFiles/pigs.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build/CMakeFiles --progress-num=1,2,3,4 "Built target pigs"
-.PHONY : CMakeFiles/pigs.dir/all
+CMakeFiles/server_pigs.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build/CMakeFiles --progress-num=6,7,8,9,10 "Built target server_pigs"
+.PHONY : CMakeFiles/server_pigs.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/pigs.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build/CMakeFiles 4
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/pigs.dir/all
+CMakeFiles/server_pigs.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/server_pigs.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build/CMakeFiles 0
-.PHONY : CMakeFiles/pigs.dir/rule
+.PHONY : CMakeFiles/server_pigs.dir/rule
 
 # Convenience name for target.
-pigs: CMakeFiles/pigs.dir/rule
-.PHONY : pigs
+server_pigs: CMakeFiles/server_pigs.dir/rule
+.PHONY : server_pigs
 
 # clean rule for target.
-CMakeFiles/pigs.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pigs.dir/build.make CMakeFiles/pigs.dir/clean
-.PHONY : CMakeFiles/pigs.dir/clean
+CMakeFiles/server_pigs.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server_pigs.dir/build.make CMakeFiles/server_pigs.dir/clean
+.PHONY : CMakeFiles/server_pigs.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/client_pigs.dir
+
+# All Build rule for target.
+CMakeFiles/client_pigs.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target client_pigs"
+.PHONY : CMakeFiles/client_pigs.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/client_pigs.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/client_pigs.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/f/D/UFRGS/Sisop2/Sisop2-PIGS/build/CMakeFiles 0
+.PHONY : CMakeFiles/client_pigs.dir/rule
+
+# Convenience name for target.
+client_pigs: CMakeFiles/client_pigs.dir/rule
+.PHONY : client_pigs
+
+# clean rule for target.
+CMakeFiles/client_pigs.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_pigs.dir/build.make CMakeFiles/client_pigs.dir/clean
+.PHONY : CMakeFiles/client_pigs.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.
