@@ -14,7 +14,7 @@
 #define BROADCAST_PORT 4000
 #define BUFFER_SIZE 256
 
-void discoverServer();
+bool discoverServer(struct sockaddr_in &serv_addr);
 
 
 #endif
