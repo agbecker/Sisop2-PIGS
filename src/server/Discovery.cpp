@@ -56,11 +56,14 @@ void Discovery::awaitRequest() {
             continue;
         }
 
-        string client_ip = inet_ntoa(cli_addr.sin_addr);
-
+        // Debug
+        string client_ip = inet_ntoa(cli_addr.sin_addr); // Salva IP recebido como string
         cout << "Recebi mensagem do " << client_ip << endl;
         cout << "A mensagem diz: " << buf << endl;
 
+        // Envia ACK
+        char ack[BUFFER_SIZE] = "SERVER HERE OINK";
+        n = sendto(sockfd, ack, strlen(ack), 0, (const struct sockaddr *) &cli_addr, sizeof(struct sockaddr_in));
         break;
     }
 
