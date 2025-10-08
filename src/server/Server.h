@@ -10,14 +10,18 @@
 #include <thread>
 #include <chrono>
 
-class Server {
-    private:
-        std::map<std::string, int> clients; // Where the client's IP is the key, and the value is their balance
-    
+#define STARTING_BALANCE 1000
+
+struct ClientData {
+    std::string ip; // IP do cliente, usado como chave
+    int balance; // Saldo do cliente
+    int seq_num; // Último número de sequência registrado do cliente
 };
 
-
-
-
+class Server {
+    private:
+        std::map<std::string, ClientData> clients;
+    
+};
 
 #endif
