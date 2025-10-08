@@ -2,20 +2,30 @@
 using namespace std;
 
 void Discovery::set_str(string* str) {
-    this->str_pointer = str;
+    str_pointer = str;
 }
 
 void Discovery::run() {
-    cout << *(this->str_pointer) << endl;
+    cout << *(str_pointer) << endl;
     this_thread::sleep_for(chrono::seconds(1));
-    cout << *(this->str_pointer) << endl;
+    cout << *(str_pointer) << endl;
+}
+
+void Discovery::treat_request (string message, struct sockaddr_in cli_addr) {
+    // Debug
+    string client_ip = inet_ntoa(cli_addr.sin_addr); // Salva IP recebido como string
+    cout << "Recebi mensagem do " << client_ip << endl;
+    cout << "A mensagem diz: " << message << endl;
+
+    // Envia ACK
+    char ack[BUFFER_SIZE] = "SERVER HERE OINK";
+    int n = sendto(sockfd, ack, strlen(ack), 0, (const struct sockaddr *) &cli_addr, sizeof(struct sockaddr_in));
 }
 
 void Discovery::awaitRequest() {
-    int sockfd; // ID do socket
     socklen_t clilen = sizeof(struct sockaddr_in); // Tamanho do IP do cliente
     struct sockaddr_in serv_addr, cli_addr; // Endereços IP do servidor e do cliente
-    char buf[BUFFER_SIZE]; // Buffer para mensagens
+    
 
     // Cria socket
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
@@ -56,18 +66,13 @@ void Discovery::awaitRequest() {
             continue;
         }
 
-        // Debug
-        string client_ip = inet_ntoa(cli_addr.sin_addr); // Salva IP recebido como string
-        cout << "Recebi mensagem do " << client_ip << endl;
-        cout << "A mensagem diz: " << buf << endl;
-
-        // Envia ACK
-        char ack[BUFFER_SIZE] = "SERVER HERE OINK";
-        n = sendto(sockfd, ack, strlen(ack), 0, (const struct sockaddr *) &cli_addr, sizeof(struct sockaddr_in));
-        break;
+        string message = buf;
+        thread ack_thread(&Discovery::treat_request, this, message, cli_addr);
+        ack_thread.detach();
     }
 
     close(sockfd);
     return;
 
 }
+

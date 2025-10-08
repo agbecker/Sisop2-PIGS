@@ -19,6 +19,9 @@
 class Discovery {
     private:
         std::string *str_pointer;
+        void treat_request(std::string message, struct sockaddr_in cli_addr);
+        int sockfd; // ID do socket
+        char buf[BUFFER_SIZE]; // Buffer para mensagens
 
     public:
         void set_str(std::string* str);
