@@ -23,6 +23,11 @@ void Discovery::treat_request (string message, struct sockaddr_in cli_addr) {
     // Envia ACK
     char ack[BUFFER_SIZE] = "SERVER HERE OINK";
     int n = sendto(sockfd, ack, strlen(ack), 0, (const struct sockaddr *) &cli_addr, sizeof(struct sockaddr_in));
+
+    // Adiciona cliente à fila de novos clientes, a ser tratado na classe Server
+    mutex_add_client->lock();
+    clients_to_add->push(client_ip);
+    mutex_add_client->unlock();
 }
 
 void Discovery::awaitRequest() {
