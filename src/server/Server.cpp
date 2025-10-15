@@ -29,9 +29,7 @@ int main() {
 
     thread t_add_clients(add_clients);
 
-    Discovery discovery;
-    discovery.clients_to_add = &clients_to_add;
-    discovery.mutex_add_client = &mutex_new_clients;
+    Discovery discovery(clients_to_add, mutex_new_clients);
     discovery.awaitRequest();
 
     return 0;

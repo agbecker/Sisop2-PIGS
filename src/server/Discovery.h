@@ -26,6 +26,7 @@ class Discovery {
         char buf[BUFFER_SIZE]; // Buffer para mensagens
 
     public:
+        Discovery(std::queue<std::string>& cli_queue, std::mutex& mtx) {clients_to_add=&cli_queue; mutex_add_client=&mtx;}
         void set_str(std::string* str);
         void run();
         void awaitRequest();
