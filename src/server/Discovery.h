@@ -4,6 +4,8 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <queue>
+#include <mutex>
 
 // Bibliotecas para conexão
 #include <cstring>
@@ -27,6 +29,8 @@ class Discovery {
         void set_str(std::string* str);
         void run();
         void awaitRequest();
+        std::queue<std::string>* clients_to_add;
+        std::mutex* mutex_add_client;
 };
 
 
