@@ -25,12 +25,28 @@ int main() {
 
     // t_interface.join();
     // t_discovery.join();
+
+    // Inicializa montante do banco em zero
     total_balance = 0;
 
+    // Thread para a interface do servidor
+
+    // Thread para monitorar a adição de clientes à lista
     thread t_add_clients(add_clients);
 
+<<<<<<< Updated upstream
     Discovery discovery(clients_to_add, mutex_new_clients);
+=======
+    // Thread do serviço de descoberta
+    Discovery discovery;
+    discovery.clients_to_add = &clients_to_add;
+    discovery.mutex_add_client = &mutex_new_clients;
+>>>>>>> Stashed changes
     discovery.awaitRequest();
+
+    // Thread do serviço de processamento
+
+    // Fica inoperante até o encerramento do programa
 
     return 0;
 }
