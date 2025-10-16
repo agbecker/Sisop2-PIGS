@@ -1,13 +1,6 @@
 #include "Interface.h"
 using namespace std;
 
-#include <iostream>
-#include <ctime>
-#include <chrono>
-#include <iomanip>
-#include <arpa/inet.h>
-#include <regex>
-
 bool ipv4IsValid(const std::string& ipAddress) {
     const std::string reg = "(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])";
     
@@ -30,14 +23,14 @@ inline std::string current_time_format() {
 Command Interface::getCommand() {
     Command cmd;
     std::string addr;
-
+    
     std::cin >> addr >> cmd.amount;
 
     if(!ipv4IsValid(addr)) {
         std::cerr << current_time_format() << " | Invalid IP address format. Try again." << std::endl;
         return getCommand();
     }
-    if(cmd.amount <= 0) {
+    if(cmd.amount < 0) {
         std::cerr << current_time_format() << " | Amount must be positive. Try again." << std::endl;
         return getCommand();
     }

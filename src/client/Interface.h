@@ -4,6 +4,14 @@
 #include <string>
 #include <netinet/in.h>
 
+#include <iostream>
+#include <ctime>
+#include <chrono>
+#include <iomanip>
+#include <arpa/inet.h>
+#include <regex>
+
+
 typedef struct Command{
     struct in_addr dest; // destination IP
     double amount;       // amount to transfer
