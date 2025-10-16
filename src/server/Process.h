@@ -7,13 +7,15 @@
 #include <queue>
 #include <mutex>
 
-// Bibliotecas para conexão
 #include <cstring>
 #include <cstdlib>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+
+#include "../json.hpp"
+using json = nlohmann::json;
 
 struct ClientData {
     std::string ip; // IP do cliente, usado como chave
