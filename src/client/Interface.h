@@ -11,6 +11,8 @@
 #include <arpa/inet.h>
 #include <regex>
 
+#include "../Utils.h"
+
 
 typedef struct Command{
     struct in_addr dest; // destination IP
@@ -21,6 +23,7 @@ class Interface {
     private:
         Command current_command;
         struct in_addr server_addr; 
+        RequestReply executeCommand(Command command);
         
         Command getCommand();
         void printCommandResult(double new_balance, int command_count);

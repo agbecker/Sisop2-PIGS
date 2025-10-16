@@ -53,7 +53,13 @@ void Interface::run() {
     while (true) {
         current_command = getCommand();
         // TODO:
-        // new_balance, id_req = executeCommand(current_command);
+        // RequestReply reply = executeCommand(current_command);
+        // Fazer em uma thread?
+        // Assinalar resultado, saldo e numero de sequencia
         // this->printCommandResult(new_balance, id_req);
     }
+}
+
+RequestReply executeCommand(Command command) {
+    // Manda para o Process para enviar pro servidor e aguarda resultado
 }
