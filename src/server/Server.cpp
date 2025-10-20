@@ -2,29 +2,6 @@
 using namespace std;
 
 int main() {
-    // Interface interface;
-    // Discovery discovery;
-
-    // thread t_interface(&Interface::run, &interface);
-
-    // string str = "Gayzinhos se amando";
-    // discovery.set_str(&str);
-    // thread t_discovery(&Discovery::run, &discovery);
-    // this_thread::sleep_for(chrono::seconds(1));
-    // str = "Gayzinhos não se amam mais";
-
-
-    // while(true) {
-    //     string command;
-    //     cin >> command;
-
-    //     if (command == "exit" or command == "quit") {
-    //         break;
-    //     }
-    // }
-
-    // t_interface.join();
-    // t_discovery.join();
     total_balance = 0;
 
     thread t_add_clients(add_clients);
@@ -73,7 +50,7 @@ void add_clients() {
         // Adiciona à lista
         ClientData new_client(ip,STARTING_BALANCE,0); // Cria novo cliente
         mutex_client_list.lock();
-        clients.insert({ip, &new_client});
+        clients.insert({ip, new_client});
         mutex_client_list.unlock();
 
         // Atualiza o saldo

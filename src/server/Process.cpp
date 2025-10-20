@@ -68,49 +68,40 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
     int seq_sender = request["sequence"];
 
     // Acessa a lista
-    mutex *mtx1, *mtx2;
-    mtx1 = &(*clients)[ip_sender]->mtx;
-    mtx2 = &(*clients)[ip_receiver]->mtx;
 
     cout << "VOU ENTRAR NO LOCK" << endl;
-
-    // mtx1->lock(); mtx2->lock();
-    mtx1->lock();
 
     cout << "DEI LOCK" << endl;
 
     // Verifica numero de sequencia
-    int seq_server = (*clients)[ip_sender]->seq_num;
+    int seq_server = (*clients)[ip_sender].seq_num;
     if(seq_server != seq_sender-1) {
-        sendReply(cli_addr, RR_NUMBER, (*clients)[ip_sender]->balance, (*clients)[ip_sender]->seq_num);
-        mtx1->unlock();// mtx2->unlock();
+        sendReply(cli_addr, RR_NUMBER, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
         return;
     }
 
     // Verifica se saldo é suficiente
-    if((*clients)[ip_sender]->balance < amount) {
-        sendReply(cli_addr, RR_BALANCE, (*clients)[ip_sender]->balance, (*clients)[ip_sender]->seq_num);
-        mtx1->unlock();// mtx2->unlock();
+    if((*clients)[ip_sender].balance < amount) {
+        sendReply(cli_addr, RR_BALANCE, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
         return;
     }
 
     cout << "TUDO CERTO PARA TRANSFERIR" << endl;
 
     // Transfere o dinheiro
-    (*clients)[ip_sender]->balance -= amount;
-    (*clients)[ip_receiver]->balance += amount;
-    (*clients)[ip_sender]->seq_num++;
+    (*clients)[ip_sender].balance -= amount;
+    (*clients)[ip_receiver].balance += amount;
+    (*clients)[ip_sender].seq_num++;
 
     cout << "Sender é " << ip_sender << " e receiver é " << ip_receiver << endl;
 
-    int new_balance = (*clients)[ip_sender]->balance; // Salva novo saldo do cliente para retornar
+    int new_balance = (*clients)[ip_sender].balance; // Salva novo saldo do cliente para retornar
 
-    cout << "O novo saldo do cliente é " << new_balance << " e a nova seq é " << (*clients)[ip_sender]->seq_num << endl;
-    cout << "O novo saldo do cliente favorecido é " << (*clients)[ip_receiver]->balance << endl;
+    cout << "O novo saldo do cliente é " << new_balance << " e a nova seq é " << (*clients)[ip_sender].seq_num << endl;
+    cout << "O novo saldo do cliente favorecido é " << (*clients)[ip_receiver].balance << endl;
 
     // Responde com ok
-    sendReply(cli_addr, RR_OK, (*clients)[ip_sender]->balance, (*clients)[ip_sender]->seq_num);
-    mtx1->unlock();// mtx2->unlock();
+    sendReply(cli_addr, RR_OK, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
     cout << "TERMINOU O PROCESSAMENTO" << endl;
 }
 
