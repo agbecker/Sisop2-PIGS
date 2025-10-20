@@ -53,13 +53,19 @@ void Interface::run() {
     while (true) {
         current_command = getCommand();
         // TODO:
-        // RequestReply reply = executeCommand(current_command);
+        executeCommand(current_command);
+        while(rr->status < RR_OK); // Aguarda processamento
         // Fazer em uma thread?
         // Assinalar resultado, saldo e numero de sequencia
         // this->printCommandResult(new_balance, id_req);
+        rr->status = RR_INVALID;
     }
 }
 
-RequestReply executeCommand(Command command) {
+void Interface::executeCommand(Command command) {
     // Manda para o Process para enviar pro servidor e aguarda resultado
+    string dest_ip = inet_ntoa(command.dest);
+    rr->destination = dest_ip;
+    rr->value = command.amount;
+    rr->status = RR_SEND;    
 }

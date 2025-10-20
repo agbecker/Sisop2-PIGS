@@ -3,19 +3,30 @@
 using namespace std;
 
 int main() {
+    // Descoberta do servidor
     struct sockaddr_in serv_addr;
     if(!discoverServer(serv_addr)) {
         cout <<"Erro na conexão com o servidor" << endl;
         return 1;
     }
 
+    // Debug
     cout << "Agora sei que o servidor tem IP " << inet_ntoa(serv_addr.sin_addr) << " para todo o sempre" << endl;
 
+    // Define o RequestReply para comunicação entre threads
+    RequestReply rr;
+
     // Inicia thread de Interface
-    Interface interface(serv_addr.sin_addr);
+    Interface interface(serv_addr.sin_addr, &rr);
     thread t_interface(&Interface::run, &interface);
-    if (t_interface.joinable())
-        t_interface.join();
+
+    // Inicia thread de Process
+    Process process(serv_addr.sin_addr, &rr);
+    thread t_process(&Process::run, &process);
+
+    while(!t_interface.joinable() and !t_process.joinable());
+    t_interface.join();
+    t_process.join();
 
     return 0;
 }
