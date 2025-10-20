@@ -16,9 +16,9 @@ typedef struct RequestReply
 #define RR_WAITING 3    // Aguardando resposta do servidor
 #define RR_OK 4         // O dado foi processado corretamente
 #define RR_BALANCE 5    // Erro no processamento por saldo insuficiente
-#define RR_SEQ 6        // Erro no processamento por número de sequência errado
-
-
+#define RR_NUMBER 6     // Erro no processamento por número de sequência errado
+#define RR_IGNORED 7    // Sem resposta do servidor
+#define RR_CONNECT 8    // Erro de conexão
 
 
 

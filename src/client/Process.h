@@ -7,6 +7,7 @@
 #include "../json.hpp"
 
 #define PORT 5000
+#define BUFFER_SIZE 256
 
 class Process {
     private:

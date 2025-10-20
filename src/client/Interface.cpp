@@ -55,6 +55,9 @@ void Interface::run() {
         // TODO:
         executeCommand(current_command);
         while(rr->status < RR_OK); // Aguarda processamento
+        // Debug
+        cout << "FOI PROCESSADO" << endl;
+
         // Fazer em uma thread?
         // Assinalar resultado, saldo e numero de sequencia
         // this->printCommandResult(new_balance, id_req);
