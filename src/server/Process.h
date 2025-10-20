@@ -15,7 +15,6 @@
 #include <netinet/in.h>
 
 #include "../json.hpp"
-using json = nlohmann::json;
 
 #define PORT 5000 // Porta para recebimento de mensagens
 #define BUFFER_SIZE 256

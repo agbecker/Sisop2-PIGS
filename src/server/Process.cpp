@@ -1,5 +1,6 @@
 #include "Process.h"
 
+using json = nlohmann::json;
 using namespace std;
 
 void Process::run() {
@@ -58,5 +59,41 @@ void Process::run() {
 
 
 void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
-    return;
+    // Obtem os dados
+    json request = json::parse(message);
+
+    string ip_sender = inet_ntoa(cli_addr.sin_addr);
+    string ip_receiver = request["receiver"];
+    int amount = request["amount"];
+    int seq_sender = request["sequence"];
+
+    // Acessa a lista
+    mutex *mtx1, *mtx2;
+    mtx1 = &(*clients)[ip_sender]->mtx;
+    mtx2 = &(*clients)[ip_receiver]->mtx;
+    mtx1->lock(); mtx2->lock();
+
+    // Verifica numero de sequencia
+    int seq_server = (*clients)[ip_sender]->seq_num;
+    if(seq_server != seq_sender-1) {
+        // Responde com erro
+        mtx1->unlock(); mtx2->unlock();
+        return;
+    }
+
+    // Verifica se saldo é suficiente
+    if((*clients)[ip_sender]->balance < amount) {
+        // Responde com erro
+        mtx1->unlock(); mtx2->unlock();
+        return;
+    }
+
+    // Transfere o dinheiro
+    (*clients)[ip_sender]->balance -= amount;
+    (*clients)[ip_receiver]->balance += amount;
+    (*clients)[ip_sender]->seq_num++;
+
+    // Responde com ok
+
+    mtx1->unlock(); mtx2->unlock();
 }

@@ -50,6 +50,13 @@ void Process::sendToServer(string request) {
         return;
     }
 
+    n = recvfrom(sockfd, buf, BUFFER_SIZE, 0, nullptr, nullptr);
+    if (n < 0) {
+		perror("ERROR recvfrom");
+        rr->status = RR_CONNECT;
+        return;
+    }
+
     // Debug
     rr->status = RR_OK;
 }
