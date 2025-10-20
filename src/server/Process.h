@@ -15,6 +15,7 @@
 #include <netinet/in.h>
 
 #include "../json.hpp"
+#include "../Utils.h"
 
 #define PORT 5000 // Porta para recebimento de mensagens
 #define BUFFER_SIZE 256
@@ -33,6 +34,7 @@ class Process {
         std::map<std::string, ClientData*> *clients; // Ponteiro para a lista de clientes
         int sockfd; // ID do socket
         void processTransaction(std::string message, struct sockaddr_in cli_addr);
+        void sendReply(struct sockaddr_in cli_addr, int status, int new_balance, int seq_num);
     public:
         Process (std::map<std::string, ClientData*> *c) {clients=c;};
         void run();

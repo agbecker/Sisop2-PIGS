@@ -44,7 +44,7 @@ void Process::sendToServer(string request) {
 
     // Envia
     n = sendto(sockfd, buf, BUFFER_SIZE, 0, (const struct sockaddr *) &server, sizeof(struct sockaddr_in));
-    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+    if (n < 0) {
 		perror("ERROR sendto");
         rr->status = RR_CONNECT;
         return;
@@ -56,6 +56,8 @@ void Process::sendToServer(string request) {
         rr->status = RR_CONNECT;
         return;
     }
+
+    cout << "Recebi do server: " << buf << endl;
 
     // Debug
     rr->status = RR_OK;

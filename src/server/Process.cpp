@@ -71,29 +71,78 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
     mutex *mtx1, *mtx2;
     mtx1 = &(*clients)[ip_sender]->mtx;
     mtx2 = &(*clients)[ip_receiver]->mtx;
-    mtx1->lock(); mtx2->lock();
+
+    cout << "VOU ENTRAR NO LOCK" << endl;
+
+    // mtx1->lock(); mtx2->lock();
+    mtx1->lock();
+
+    cout << "DEI LOCK" << endl;
 
     // Verifica numero de sequencia
     int seq_server = (*clients)[ip_sender]->seq_num;
     if(seq_server != seq_sender-1) {
-        // Responde com erro
-        mtx1->unlock(); mtx2->unlock();
+        sendReply(cli_addr, RR_NUMBER, (*clients)[ip_sender]->balance, (*clients)[ip_sender]->seq_num);
+        mtx1->unlock();// mtx2->unlock();
         return;
     }
 
     // Verifica se saldo é suficiente
     if((*clients)[ip_sender]->balance < amount) {
-        // Responde com erro
-        mtx1->unlock(); mtx2->unlock();
+        sendReply(cli_addr, RR_BALANCE, (*clients)[ip_sender]->balance, (*clients)[ip_sender]->seq_num);
+        mtx1->unlock();// mtx2->unlock();
         return;
     }
+
+    cout << "TUDO CERTO PARA TRANSFERIR" << endl;
 
     // Transfere o dinheiro
     (*clients)[ip_sender]->balance -= amount;
     (*clients)[ip_receiver]->balance += amount;
     (*clients)[ip_sender]->seq_num++;
 
-    // Responde com ok
+    cout << "Sender é " << ip_sender << " e receiver é " << ip_receiver << endl;
 
-    mtx1->unlock(); mtx2->unlock();
+    int new_balance = (*clients)[ip_sender]->balance; // Salva novo saldo do cliente para retornar
+
+    cout << "O novo saldo do cliente é " << new_balance << " e a nova seq é " << (*clients)[ip_sender]->seq_num << endl;
+    cout << "O novo saldo do cliente favorecido é " << (*clients)[ip_receiver]->balance << endl;
+
+    // Responde com ok
+    sendReply(cli_addr, RR_OK, (*clients)[ip_sender]->balance, (*clients)[ip_sender]->seq_num);
+    mtx1->unlock();// mtx2->unlock();
+    cout << "TERMINOU O PROCESSAMENTO" << endl;
+}
+
+void Process::sendReply(struct sockaddr_in cli_addr, int status, int new_balance, int seq_num) {
+    char buf[BUFFER_SIZE];
+    int sockfd, n;
+
+    // Cria o socket
+    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sockfd < 0) {
+        perror("ERROR opening socket");
+        return;
+    }
+
+    // Cria a mensagem com resposta
+    json ack = {
+        {"status", status},
+        {"balance", new_balance},
+        {"sequence", seq_num}
+    };
+
+    // Converte JSON para string
+    string message = ack.dump(4);
+    bzero(buf, BUFFER_SIZE);
+    strcpy(buf, message.c_str());
+
+    // Envia a resposta
+    n = sendto(sockfd, buf, BUFFER_SIZE, 0, (const struct sockaddr *) &cli_addr, sizeof(struct sockaddr_in));
+    if (n < 0) {
+		perror("ERROR sendto");
+        return;
+    }
+
+    close(sockfd);
 }
