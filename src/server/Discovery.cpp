@@ -40,6 +40,7 @@ void Discovery::awaitRequest() {
 		perror("ERROR opening socket");
         return;
     }
+    // Debug
     printf("Passou pela criacao do socket\n");
 
     // Inicializa socket (IPv4, porta BROADCAST_PORT, aceita conexão de qualquer lugar)

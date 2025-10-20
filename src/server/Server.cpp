@@ -32,7 +32,17 @@ int main() {
     Discovery discovery;
     discovery.clients_to_add = &clients_to_add;
     discovery.mutex_add_client = &mutex_new_clients;
-    discovery.awaitRequest();
+    thread t_discovery(&Discovery::awaitRequest, &discovery);
+
+    Process process(&clients);
+    thread t_process(&Process::run, &process);
+
+    // Debug
+    clients_to_add.push("1.2.3.4");
+
+    while(!t_discovery.joinable() && !t_process.joinable());
+    t_discovery.join();
+    t_process.join();
 
     return 0;
 }
@@ -63,7 +73,7 @@ void add_clients() {
         // Adiciona à lista
         ClientData new_client(ip,STARTING_BALANCE,0); // Cria novo cliente
         mutex_client_list.lock();
-        clients.insert({ip, new_client});
+        clients.insert({ip, &new_client});
         mutex_client_list.unlock();
 
         // Atualiza o saldo

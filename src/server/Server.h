@@ -14,7 +14,7 @@
 
 #define STARTING_BALANCE 1000
 
-std::map<std::string, ClientData> clients;
+std::map<std::string, ClientData*> clients;
 std::mutex mutex_client_list;
 
 std::queue<std::string> clients_to_add;

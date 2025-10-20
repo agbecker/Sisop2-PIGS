@@ -17,12 +17,26 @@
 #include "../json.hpp"
 using json = nlohmann::json;
 
+#define PORT 5000 // Porta para recebimento de mensagens
+#define BUFFER_SIZE 256
+
 struct ClientData {
     std::string ip; // IP do cliente, usado como chave
     int balance; // Saldo do cliente
     int seq_num; // Último número de sequência registrado do cliente
+    std::mutex mtx; // Mutex para transações do cliente
 
-    ClientData(std::string i, int b, int s): ip(i), balance(b), seq_num(s) {}
+    ClientData(std::string i, int b, int s): ip(i), balance(b), seq_num(s), mtx() {}
+};
+
+class Process {
+    private:
+        std::map<std::string, ClientData*> *clients; // Ponteiro para a lista de clientes
+        int sockfd; // ID do socket
+        void processTransaction(std::string message, struct sockaddr_in cli_addr);
+    public:
+        Process (std::map<std::string, ClientData*> *c) {clients=c;};
+        void run();
 };
 
 #endif
