@@ -13,7 +13,6 @@ bool discoverServer(struct sockaddr_in &serv_addr) {
 		perror("ERROR opening socket");
         return false;
     }
-    printf("Passou pela criacao do socket\n");
 
     // Configura socket para enviar mensagens em broadcast
     int bc_enable = 1;
@@ -55,11 +54,6 @@ bool discoverServer(struct sockaddr_in &serv_addr) {
             n = -1;
         }
     }
-
-    // Debug
-    string server_ip = inet_ntoa(serv_addr.sin_addr);
-    cout << "O servidor tem IP " << server_ip << endl;
-    cout << "Ele respondeu: " << buf << endl;
 
     close(sockfd);
     return true;

@@ -41,27 +41,45 @@ Command Interface::getCommand() {
     return cmd;
 }
 
-void Interface::printCommandResult(double new_balance, int command_count) {
+void Interface::printCommandResult() {
+    int command_count = rr->seq_num;
+    int new_balance = rr->value;
     std::string server_ip = inet_ntoa(this->server_addr);
     std::string dest_ip = inet_ntoa(this->current_command.dest);
 
-    std::cout << "\n" << current_time_format() << " server " << server_ip << " id_req " << command_count;
-    std::cout << " dest " << dest_ip << " value " << this->current_command.amount << " new_balance " << new_balance << std::endl;
+    if(rr->status == RR_OK) {
+        std::cout << "\n" << current_time_format() << " server " << server_ip << " id_req " << command_count;
+        std::cout << " dest " << dest_ip << " value " << this->current_command.amount << " new_balance " << new_balance << std::endl;
+    }
+
+    if(rr->status == RR_BALANCE) {
+        std::cout << "\n" << current_time_format() << " Saldo insuficiente!" << " value " << this->current_command.amount << " balance " << new_balance << std::endl;
+    }
+}
+
+void Interface::printInfo() {
+    // Inicialização (ao descobrir o server)
+    string server_ip = inet_ntoa(this->server_addr);
+    cout << current_time_format() << " server " << server_ip << endl;
+
+    // Loop para resultados de requisições
+    while(true) {
+        while(rr->status < RR_OK); // Aguarda processamento
+        // Imprime resultado da requisição
+        printCommandResult();
+        rr->status = RR_INVALID;
+    }
 }
 
 void Interface::run() {
-    while (true) {
-        current_command = getCommand();
-        // TODO:
-        executeCommand(current_command);
-        while(rr->status < RR_OK); // Aguarda processamento
-        // Debug
-        cout << "FOI PROCESSADO" << endl;
+    // Cria thread de escrita
+    thread t_print(&Interface::printInfo, this);
+    rr->status = RR_INVALID;
 
-        // Fazer em uma thread?
-        // Assinalar resultado, saldo e numero de sequencia
-        // this->printCommandResult(new_balance, id_req);
-        rr->status = RR_INVALID;
+    while (true) {
+        // Obtem comando do usuario e envia ao servidor
+        current_command = getCommand();
+        executeCommand(current_command);
     }
 }
 

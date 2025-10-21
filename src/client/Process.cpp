@@ -21,8 +21,6 @@ void Process::run() {
         rr->status = RR_WAITING;
         string ack = sendToServer(message);
 
-        cout << "Recebi do server: " << ack << endl;
-
         // Faz parsing da resposta
         json reply = json::parse(ack);
         // TODO ajeitar erros de conexão

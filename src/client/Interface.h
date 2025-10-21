@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <arpa/inet.h>
 #include <regex>
+#include <thread>
 
 #include "../Utils.h"
 
@@ -26,7 +27,8 @@ class Interface {
         void executeCommand(Command command);
         
         Command getCommand();
-        void printCommandResult(double new_balance, int command_count);
+        void printCommandResult();
+        void printInfo();
 
         RequestReply *rr;
 
