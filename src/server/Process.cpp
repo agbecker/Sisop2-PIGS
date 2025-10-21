@@ -68,10 +68,7 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
     int seq_sender = request["sequence"];
 
     // Acessa a lista
-
-    cout << "VOU ENTRAR NO LOCK" << endl;
-
-    cout << "DEI LOCK" << endl;
+    mtx_clients->lock();
 
     // Verifica numero de sequencia
     int seq_server = (*clients)[ip_sender].seq_num;
@@ -86,23 +83,25 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
         return;
     }
 
-    cout << "TUDO CERTO PARA TRANSFERIR" << endl;
-
     // Transfere o dinheiro
     (*clients)[ip_sender].balance -= amount;
     (*clients)[ip_receiver].balance += amount;
     (*clients)[ip_sender].seq_num++;
 
+    // Debug
     cout << "Sender é " << ip_sender << " e receiver é " << ip_receiver << endl;
 
     int new_balance = (*clients)[ip_sender].balance; // Salva novo saldo do cliente para retornar
 
+    // Debug
     cout << "O novo saldo do cliente é " << new_balance << " e a nova seq é " << (*clients)[ip_sender].seq_num << endl;
     cout << "O novo saldo do cliente favorecido é " << (*clients)[ip_receiver].balance << endl;
 
     // Responde com ok
     sendReply(cli_addr, RR_OK, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
-    cout << "TERMINOU O PROCESSAMENTO" << endl;
+    
+    // Libera acesso à lista
+    mtx_clients->unlock();
 }
 
 void Process::sendReply(struct sockaddr_in cli_addr, int status, int new_balance, int seq_num) {

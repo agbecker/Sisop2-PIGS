@@ -12,7 +12,7 @@ int main() {
     Discovery discovery(clients_to_add, mutex_new_clients);
     thread t_discovery(&Discovery::awaitRequest, &discovery);
 
-    Process process(&clients);
+    Process process(&clients, &mutex_client_list);
     thread t_process(&Process::run, &process);
 
     // Debug
