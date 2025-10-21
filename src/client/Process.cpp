@@ -41,7 +41,6 @@ void Process::run() {
             rr->value = reply["balance"];
             rr->seq_num = reply["sequence"];
             rr->status = status;
-            this->num_seq = rr->seq_num;
             continue;
         }
         
