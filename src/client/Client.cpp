@@ -7,9 +7,6 @@ int main() {
     struct sockaddr_in serv_addr;
     while(!discoverServer(serv_addr));
 
-    // Debug
-    cout << "Agora sei que o servidor tem IP " << inet_ntoa(serv_addr.sin_addr) << " para todo o sempre" << endl;
-
     // Define o RequestReply para comunicação entre threads
     RequestReply rr;
 

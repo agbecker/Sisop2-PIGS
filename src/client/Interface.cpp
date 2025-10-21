@@ -52,6 +52,10 @@ void Interface::printCommandResult() {
 }
 
 void Interface::run() {
+    // Inicialização
+    string server_ip = inet_ntoa(this->server_addr);
+    cout << current_time_format() << " server " << server_ip << endl;
+
     while (true) {
         // Obtem comando do usuario e envia ao servidor
         current_command = getCommand();
