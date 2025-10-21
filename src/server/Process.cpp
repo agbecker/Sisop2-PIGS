@@ -74,12 +74,14 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
     int seq_server = (*clients)[ip_sender].seq_num;
     if(seq_server != seq_sender-1) {
         sendReply(cli_addr, RR_NUMBER, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
+        mtx_clients->unlock();
         return;
     }
 
     // Verifica se saldo é suficiente
     if((*clients)[ip_sender].balance < amount) {
         sendReply(cli_addr, RR_BALANCE, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
+        mtx_clients->unlock();
         return;
     }
 

@@ -23,13 +23,48 @@ void Process::run() {
 
         // Faz parsing da resposta
         json reply = json::parse(ack);
-        // TODO ajeitar erros de conexão
 
-        this->num_seq = reply["sequence"];
-        this->num_seq++;
-        rr->value = reply["balance"];
-        rr->seq_num = reply["sequence"];
-        rr->status = reply["status"];
+        int status = reply["status"];
+
+        // Processamento ok
+        if(status == RR_OK) {
+            this->num_seq = reply["sequence"];
+            this->num_seq++;
+            rr->value = reply["balance"];
+            rr->seq_num = reply["sequence"];
+            rr->status = status;
+            continue;
+        }
+
+        // Erro de saldo insuficiente
+        if(status == RR_BALANCE) {
+            rr->value = reply["balance"];
+            rr->seq_num = reply["sequence"];
+            rr->status = status;
+            continue;
+        }
+        
+        // Erro de número de sequência
+        // Na prática não deveria acontecer, 
+        // mas presume que não imprimiu a última requisição
+        // e imprime ela. Senão, descarta a última e ajusta o número
+        if(status == RR_NUMBER) {
+            // Última não processada
+            if(rr->seq_num == reply["sequence"]) {
+                this->num_seq++;
+                rr->value = reply["balance"];
+                rr->seq_num = reply["sequence"];
+                rr->status = RR_OK;
+            }
+
+            // Caso contrário, descarta
+            else {
+                rr->seq_num = reply["sequence"];
+                this->num_seq = rr->seq_num+1;
+                rr->value = reply["balance"];
+                rr->status = RR_NUMBER;
+            }
+        }
 
     }
 }
