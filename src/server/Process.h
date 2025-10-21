@@ -33,10 +33,11 @@ class Process {
     private:
         std::map<std::string, ClientData> *clients; // Ponteiro para a lista de clientes
         int sockfd; // ID do socket
+        std::mutex* mtx_clients; // Mutex para acesso à lista de clientes
         void processTransaction(std::string message, struct sockaddr_in cli_addr);
         void sendReply(struct sockaddr_in cli_addr, int status, int new_balance, int seq_num);
     public:
-        Process (std::map<std::string, ClientData> *c) {clients=c;};
+        Process (std::map<std::string, ClientData> *c, std::mutex* mtx): clients(c), mtx_clients(mtx) {};
         void run();
 };
 
