@@ -4,24 +4,39 @@ using json = nlohmann::json;
 using namespace std;
 
 void Process::run() {
-    while(rr->status!=RR_SEND);
-    string receiver_ip = rr->destination;
-    int amount = rr->value;
-    json request = {
-        {"receiver", receiver_ip},
-        {"amount", amount},
-        {"sequence", num_seq}
-    };
+    while(true) {
+        while(rr->status!=RR_SEND);
+        string receiver_ip = rr->destination;
+        int amount = rr->value;
+        json request = {
+            {"receiver", receiver_ip},
+            {"amount", amount},
+            {"sequence", num_seq}
+        };
 
-    // Converte JSON para string
-    string message = request.dump(4);
+        // Converte JSON para string
+        string message = request.dump(4);
 
-    // Envia para o servidor
-    rr->status = RR_WAITING;
-    sendToServer(message);
+        // Envia para o servidor
+        rr->status = RR_WAITING;
+        string ack = sendToServer(message);
+
+        cout << "Recebi do server: " << ack << endl;
+
+        // Faz parsing da resposta
+        json reply = json::parse(ack);
+        // TODO ajeitar erros de conexão
+
+        this->num_seq = reply["sequence"];
+        this->num_seq++;
+        rr->value = reply["balance"];
+        rr->seq_num = reply["sequence"];
+        rr->status = reply["status"];
+
+    }
 }
 
-void Process::sendToServer(string request) {
+string Process::sendToServer(string request) {
     int sockfd, n;
     struct sockaddr_in server;
     char buf[BUFFER_SIZE];
@@ -30,7 +45,7 @@ void Process::sendToServer(string request) {
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
 		perror("ERROR opening socket");
         rr->status = RR_CONNECT;
-        return;
+        return "";
     }
 
     // Prepara conexão
@@ -47,18 +62,15 @@ void Process::sendToServer(string request) {
     if (n < 0) {
 		perror("ERROR sendto");
         rr->status = RR_CONNECT;
-        return;
+        return "";
     }
 
     n = recvfrom(sockfd, buf, BUFFER_SIZE, 0, nullptr, nullptr);
     if (n < 0) {
 		perror("ERROR recvfrom");
         rr->status = RR_CONNECT;
-        return;
+        return "";
     }
 
-    cout << "Recebi do server: " << buf << endl;
-
-    // Debug
-    rr->status = RR_OK;
+    return buf;
 }

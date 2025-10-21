@@ -14,7 +14,7 @@ class Process {
     private:
         int num_seq;
         RequestReply* rr;
-        void sendToServer(std::string request);
+        std::string sendToServer(std::string request);
         struct in_addr serv_addr;
     public:
         Process(struct in_addr serv, RequestReply* r): num_seq(1), rr(r), serv_addr(serv) {};
