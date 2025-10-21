@@ -23,8 +23,8 @@ typedef struct RequestReply
 
 #define TIMEOUT 10      // Tempo limite de time-out (em ms)
 
-
-
+#define DISCOVERY_ASK "WHERE IS SERVER OINK"
+#define DISCOVERY_REPLY "SERVER HERE OINK"
 
 
 

@@ -42,13 +42,18 @@ bool discoverServer(struct sockaddr_in &serv_addr) {
     int n = -1;
     while(n < 0) {
         // Envia a mensagem
-        strcpy(buf, "WHERE IS SERVER OINK");
+        strcpy(buf, DISCOVERY_ASK);
         n = sendto(sockfd, buf, strlen(buf), 0, (const struct sockaddr *) &serv_addr, sizeof(struct sockaddr_in));
 
         // Aguarda o ACK
         bzero(buf, BUFFER_SIZE);
         n = recvfrom(sockfd, buf, BUFFER_SIZE, 0, (struct sockaddr *) &serv_addr, &servlen);
-        cout << "enviando broadcast" << endl;
+        
+        // Verifica que a resposta foi realmente do servidor
+        string reply = buf;
+        if(reply != DISCOVERY_REPLY) {
+            n = -1;
+        }
     }
 
     // Debug

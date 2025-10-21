@@ -17,11 +17,11 @@ void Discovery::treat_request (string message, struct sockaddr_in cli_addr) {
     cout << "Recebi mensagem do " << client_ip << endl;
     cout << "A mensagem diz: " << message << endl;
 
-    if (message != "WHERE IS SERVER OINK")
+    if (message != DISCOVERY_ASK)
         return;
 
     // Envia ACK
-    char ack[BUFFER_SIZE] = "SERVER HERE OINK";
+    char ack[BUFFER_SIZE] = DISCOVERY_REPLY;
     int n = sendto(sockfd, ack, strlen(ack), 0, (const struct sockaddr *) &cli_addr, sizeof(struct sockaddr_in));
 
     // Adiciona cliente à fila de novos clientes, a ser tratado na classe Server
