@@ -47,8 +47,14 @@ void Interface::printCommandResult() {
     std::string server_ip = inet_ntoa(this->server_addr);
     std::string dest_ip = inet_ntoa(this->current_command.dest);
 
-    std::cout << "\n" << current_time_format() << " server " << server_ip << " id_req " << command_count;
-    std::cout << " dest " << dest_ip << " value " << this->current_command.amount << " new_balance " << new_balance << std::endl;
+    if(rr->status == RR_OK) {
+        std::cout << "\n" << current_time_format() << " server " << server_ip << " id_req " << command_count;
+        std::cout << " dest " << dest_ip << " value " << this->current_command.amount << " new_balance " << new_balance << std::endl;
+    }
+
+    if(rr->status == RR_BALANCE) {
+        std::cout << "\n" << current_time_format() << " Saldo insuficiente!" << " value " << this->current_command.amount << " balance " << new_balance << std::endl;
+    }
 }
 
 void Interface::printInfo() {
