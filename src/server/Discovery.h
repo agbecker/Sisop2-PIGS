@@ -14,6 +14,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include "../Utils.h"
 
 #define BROADCAST_PORT 4000
 #define BUFFER_SIZE 256

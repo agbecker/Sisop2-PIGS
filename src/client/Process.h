@@ -6,6 +6,8 @@
 #include <arpa/inet.h>
 #include "../json.hpp"
 #include <iostream>
+#include <unistd.h>
+#include <errno.h>
 
 #define PORT 5000
 #define BUFFER_SIZE 256

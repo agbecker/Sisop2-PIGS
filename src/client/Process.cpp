@@ -48,29 +48,44 @@ string Process::sendToServer(string request) {
         return "";
     }
 
+    // Configura timeout para recvfrom
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = TIMEOUT;
+    if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
+        perror("setsockopt timeout");
+        close(sockfd);
+        return "";
+    }
+
     // Prepara conexão
     server.sin_family = AF_INET;     
 	server.sin_port = htons(PORT);
     server.sin_addr = this->serv_addr;
 
-    // Prepara mensagem
-    bzero(buf, BUFFER_SIZE);
-    strcpy(buf,request.c_str());
-
     // Envia
-    n = sendto(sockfd, buf, BUFFER_SIZE, 0, (const struct sockaddr *) &server, sizeof(struct sockaddr_in));
-    if (n < 0) {
-		perror("ERROR sendto");
-        rr->status = RR_CONNECT;
-        return "";
-    }
+    n = -1;
+    while(n < 0){
+        // Prepara mensagem
+        bzero(buf, BUFFER_SIZE);
+        strcpy(buf,request.c_str());
 
-    n = recvfrom(sockfd, buf, BUFFER_SIZE, 0, nullptr, nullptr);
-    if (n < 0) {
-		perror("ERROR recvfrom");
-        rr->status = RR_CONNECT;
-        return "";
-    }
+        n = sendto(sockfd, buf, BUFFER_SIZE, 0, (const struct sockaddr *) &server, sizeof(struct sockaddr_in));
+        if (n < 0) {
+            perror("ERROR sendto");
+            rr->status = RR_CONNECT;
+            return "";
+        }
+
+        n = recvfrom(sockfd, buf, BUFFER_SIZE, 0, nullptr, nullptr);
+        if (n < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
+            perror("ERROR recvfrom");
+            rr->status = RR_CONNECT;
+            return "";
+        }
+    }  
+
+    close(sockfd);
 
     return buf;
 }
