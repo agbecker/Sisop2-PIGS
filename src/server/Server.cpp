@@ -2,31 +2,6 @@
 using namespace std;
 
 int main() {
-    // Interface interface;
-    // Discovery discovery;
-
-    // thread t_interface(&Interface::run, &interface);
-
-    // string str = "Gayzinhos se amando";
-    // discovery.set_str(&str);
-    // thread t_discovery(&Discovery::run, &discovery);
-    // this_thread::sleep_for(chrono::seconds(1));
-    // str = "Gayzinhos não se amam mais";
-
-
-    // while(true) {
-    //     string command;
-    //     cin >> command;
-
-    //     if (command == "exit" or command == "quit") {
-    //         break;
-    //     }
-    // }
-
-    // t_interface.join();
-    // t_discovery.join();
-
-    // Inicializa montante do banco em zero
     total_balance = 0;
 
     // Thread para a interface do servidor
@@ -34,14 +9,18 @@ int main() {
     // Thread para monitorar a adição de clientes à lista
     thread t_add_clients(add_clients);
 
-<<<<<<< Updated upstream
     Discovery discovery(clients_to_add, mutex_new_clients);
-=======
-    // Thread do serviço de descoberta
-    Discovery discovery;
-    discovery.clients_to_add = &clients_to_add;
-    discovery.mutex_add_client = &mutex_new_clients;
->>>>>>> Stashed changes
+    thread t_discovery(&Discovery::awaitRequest, &discovery);
+
+    Process process(&clients);
+    thread t_process(&Process::run, &process);
+
+    // Debug
+    clients_to_add.push("1.2.3.4");
+
+    while(!t_discovery.joinable() && !t_process.joinable());
+    t_discovery.join();
+    t_process.join();
     discovery.awaitRequest();
 
     // Thread do serviço de processamento

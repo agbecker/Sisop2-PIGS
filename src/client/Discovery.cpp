@@ -5,7 +5,6 @@ using namespace std;
 bool discoverServer(struct sockaddr_in &serv_addr) {
     int sockfd; // ID do socket
     socklen_t servlen = sizeof(struct sockaddr_in); // Tamanho do IP do servidor
-    struct sockaddr_in cli_addr; // Endereço IP do cliente
     struct hostent *server; // Servidor
     char buf[BUFFER_SIZE] = "WHERE IS SERVER OINK"; // Mensagem
 

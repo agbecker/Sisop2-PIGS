@@ -1,21 +1,26 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
+#include "../Utils.h"
+#include <sys/socket.h>
+#include <arpa/inet.h>
 #include "../json.hpp"
-using json = nlohmann::json;
-
-
 #include <iostream>
 
-#include <cstring>
-#include <cstdlib>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-
-#define REQUEST_PORT 4001
+#define PORT 5000
 #define BUFFER_SIZE 256
+
+class Process {
+    private:
+        int num_seq;
+        RequestReply* rr;
+        std::string sendToServer(std::string request);
+        struct in_addr serv_addr;
+    public:
+        Process(struct in_addr serv, RequestReply* r): num_seq(1), rr(r), serv_addr(serv) {};
+        void run();
+};
+
 
 
 #endif
