@@ -51,21 +51,29 @@ void Interface::printCommandResult() {
     std::cout << " dest " << dest_ip << " value " << this->current_command.amount << " new_balance " << new_balance << std::endl;
 }
 
-void Interface::run() {
-    // Inicialização
+void Interface::printInfo() {
+    // Inicialização (ao descobrir o server)
     string server_ip = inet_ntoa(this->server_addr);
     cout << current_time_format() << " server " << server_ip << endl;
+
+    // Loop para resultados de requisições
+    while(true) {
+        while(rr->status < RR_OK); // Aguarda processamento
+        // Imprime resultado da requisição
+        printCommandResult();
+        rr->status = RR_INVALID;
+    }
+}
+
+void Interface::run() {
+    // Cria thread de escrita
+    thread t_print(&Interface::printInfo, this);
+    rr->status = RR_INVALID;
 
     while (true) {
         // Obtem comando do usuario e envia ao servidor
         current_command = getCommand();
         executeCommand(current_command);
-
-        while(rr->status < RR_OK); // Aguarda processamento
-        
-        // Imprime resultado da requisição
-        printCommandResult();
-        rr->status = RR_INVALID;
     }
 }
 
