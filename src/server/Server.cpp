@@ -4,11 +4,12 @@ using namespace std;
 int main() {
     total_balance = 0;
 
+    // Thread para a interface do servidor
+
+    // Thread para monitorar a adição de clientes à lista
     thread t_add_clients(add_clients);
 
-    Discovery discovery;
-    discovery.clients_to_add = &clients_to_add;
-    discovery.mutex_add_client = &mutex_new_clients;
+    Discovery discovery(clients_to_add, mutex_new_clients);
     thread t_discovery(&Discovery::awaitRequest, &discovery);
 
     Process process(&clients);
@@ -20,6 +21,11 @@ int main() {
     while(!t_discovery.joinable() && !t_process.joinable());
     t_discovery.join();
     t_process.join();
+    discovery.awaitRequest();
+
+    // Thread do serviço de processamento
+
+    // Fica inoperante até o encerramento do programa
 
     return 0;
 }
