@@ -2,6 +2,7 @@
 #define DISCOVERY_H
 
 #include <iostream>
+#include "../Utils.h"
 
 // Bibliotecas para conexão
 #include <cstring>

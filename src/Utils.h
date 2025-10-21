@@ -21,10 +21,10 @@ typedef struct RequestReply
 #define RR_CONNECT 8    // Erro de conexão
 
 
+#define TIMEOUT 10      // Tempo limite de time-out (em ms)
 
-
-
-
+#define DISCOVERY_ASK "WHERE IS SERVER OINK"
+#define DISCOVERY_REPLY "SERVER HERE OINK"
 
 
 
