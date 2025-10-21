@@ -26,7 +26,7 @@ class Interface {
         void executeCommand(Command command);
         
         Command getCommand();
-        void printCommandResult(double new_balance, int command_count);
+        void printCommandResult();
 
         RequestReply *rr;
 
