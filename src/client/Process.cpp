@@ -36,6 +36,14 @@ void Process::run() {
             continue;
         }
 
+        // Erro de destinatário inválido
+        if(status == RR_NOTONLIST) {
+            rr->value = reply["balance"];
+            rr->seq_num = reply["sequence"];
+            rr->status = status;
+            continue;
+        }
+
         // Erro de saldo insuficiente
         if(status == RR_BALANCE) {
             rr->value = reply["balance"];

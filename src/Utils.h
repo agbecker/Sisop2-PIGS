@@ -19,6 +19,7 @@ typedef struct RequestReply
 #define RR_NUMBER 6     // Erro no processamento por número de sequência errado
 #define RR_IGNORED 7    // Sem resposta do servidor
 #define RR_CONNECT 8    // Erro de conexão
+#define RR_NOTONLIST 9  // IP destinatário não consta na lista de clientes
 
 
 #define TIMEOUT 10      // Tempo limite de time-out (em ms)
