@@ -78,6 +78,14 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
         return;
     }
 
+    // Verifica se o valor transferido é zero (usuário só quer ver o saldo)
+    // nesse caso não analisa se o IP destino existe
+    if(amount == 0) {
+        sendReply(cli_addr, RR_OK, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
+        mtx_clients->unlock();
+        return;
+    }
+
     // Verifica se o destinatário consta na lista
     if(clients->count(ip_receiver) == 0) {
         sendReply(cli_addr, RR_NOTONLIST, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
