@@ -55,6 +55,10 @@ void Interface::printCommandResult() {
     if(rr->status == RR_BALANCE) {
         std::cout << "\n" << current_time_format() << " Saldo insuficiente!" << " value " << this->current_command.amount << " balance " << new_balance << std::endl;
     }
+
+    if(rr->status == RR_NOTONLIST) {
+        std::cout << "\n" << current_time_format() << " Destinatário não encontrado! Verifique o IP." << std::endl;
+    }
 }
 
 void Interface::printInfo() {

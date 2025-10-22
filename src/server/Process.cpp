@@ -78,6 +78,13 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
         return;
     }
 
+    // Verifica se o destinatário consta na lista
+    if(clients->count(ip_receiver) == 0) {
+        sendReply(cli_addr, RR_NOTONLIST, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
+        mtx_clients->unlock();
+        return;
+    }
+
     // Verifica se saldo é suficiente
     if((*clients)[ip_sender].balance < amount) {
         sendReply(cli_addr, RR_BALANCE, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
