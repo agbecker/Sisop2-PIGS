@@ -45,11 +45,6 @@ void add_clients() {
 
         // Verifica se já consta na lista
         if (clients.find(ip) != clients.end()) {
-            
-
-            // Debug
-            cout << "O cliente " << ip << " já consta na lista" << endl;
-
             continue; // Se já consta, não faz nada
         }
 
@@ -61,9 +56,5 @@ void add_clients() {
 
         // Atualiza o saldo
         total_balance += STARTING_BALANCE;
-
-        // Debug
-        cout << "Adicionei o cliente " << ip << " à lista" << endl;
-
     }
 }

@@ -14,9 +14,6 @@ void Process::run() {
         return;
     }
 
-    // Debug
-	printf("passou pela criacao do socket\n");
-
     // Inicializa socket (IPv4, porta PORT, recebe de qualquer endereço)
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(PORT);
@@ -30,10 +27,6 @@ void Process::run() {
         return;
     }
 
-    // Debug
-	printf("passou pelo bind\n");
-
-
 	while(true) {
 		bzero(buf, BUFFER_SIZE); // Limpa o buffer
 		
@@ -44,9 +37,6 @@ void Process::run() {
             perror("ERROR on recvfrom");
             continue;
         }
-
-        // Debug
-		printf("Recebi o seguinte datagrama: %s\n", buf);
 		
 		// Processa a requisição
         string message = buf;
@@ -105,14 +95,7 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
     (*clients)[ip_receiver].balance += amount;
     (*clients)[ip_sender].seq_num++;
 
-    // Debug
-    cout << "Sender é " << ip_sender << " e receiver é " << ip_receiver << endl;
-
     int new_balance = (*clients)[ip_sender].balance; // Salva novo saldo do cliente para retornar
-
-    // Debug
-    cout << "O novo saldo do cliente é " << new_balance << " e a nova seq é " << (*clients)[ip_sender].seq_num << endl;
-    cout << "O novo saldo do cliente favorecido é " << (*clients)[ip_receiver].balance << endl;
 
     // Responde com ok
     sendReply(cli_addr, RR_OK, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
