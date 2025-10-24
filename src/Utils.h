@@ -27,6 +27,14 @@ typedef struct RequestReply
 #define DISCOVERY_ASK "WHERE IS SERVER OINK"
 #define DISCOVERY_REPLY "SERVER HERE OINK"
 
-
+// Struct usada para comunicação entre threads do servidor
+typedef struct Event
+{   int status;
+    int value;
+    int seq_num;
+    std::string origin;
+    std::string destination;
+    bool duplicate;
+} RequestReply;
 
 #endif

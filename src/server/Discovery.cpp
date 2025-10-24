@@ -13,6 +13,8 @@ void Discovery::run() {
 
 void Discovery::treat_request (string message, struct sockaddr_in cli_addr) {
 
+    string client_ip = inet_ntoa(cli_addr.sin_addr); // Salva IP recebido como string
+
     if (message != DISCOVERY_ASK)
         return;
 
