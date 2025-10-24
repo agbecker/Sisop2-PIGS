@@ -3,7 +3,7 @@
 
 #include <string>
 #include <netinet/in.h>
-
+#include <queue>
 #include <iostream>
 #include <ctime>
 #include <chrono>
@@ -19,8 +19,9 @@ class Interface {
         void show_stats();
         int num_transactions;
         long int total_transferred, total_balance;
+        std::queue<Event> *events;
     public:
-        Interface(): num_transactions(0), total_transferred(0), total_balance(0) {};
+        Interface(std::queue<Event> *e):events(e), num_transactions(0), total_transferred(0), total_balance(0) {};
         void run();
 };
 

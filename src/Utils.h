@@ -35,6 +35,6 @@ typedef struct Event
     std::string origin;
     std::string destination;
     bool duplicate;
-} RequestReply;
+} Event;
 
 #endif

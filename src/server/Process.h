@@ -36,8 +36,9 @@ class Process {
         std::mutex* mtx_clients; // Mutex para acesso à lista de clientes
         void processTransaction(std::string message, struct sockaddr_in cli_addr);
         void sendReply(struct sockaddr_in cli_addr, int status, int new_balance, int seq_num);
+        std::queue<Event> *events;
     public:
-        Process (std::map<std::string, ClientData> *c, std::mutex* mtx): clients(c), mtx_clients(mtx) {};
+        Process (std::map<std::string, ClientData> *c, std::mutex* mtx, std::queue<Event> *e): clients(c), mtx_clients(mtx), events(e) {};
         void run();
 };
 
