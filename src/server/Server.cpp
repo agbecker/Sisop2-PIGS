@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
     thread t_process(&Process::run, &process);
 
     // Debug
-    clients_to_add.push("1.2.3.4");
+    // clients_to_add.push("1.2.3.4");
 
     // Aguarda encerramento do programa
     while(!t_discovery.joinable() && !t_process.joinable() && !t_discovery.joinable());
