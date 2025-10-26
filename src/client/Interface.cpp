@@ -25,13 +25,22 @@ Command Interface::getCommand() {
     std::string addr;
     
     std::cin >> addr >> cmd.amount;
-
+    
+    if(std::cin.fail()) {
+        std::cin.clear(); // limpa o estado de erro
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // limpa o buffer
+        std::cerr << current_time_format() << " | Invalid input format. Try again." << "\n";
+        return getCommand();
+    }
+    
     if(!ipv4IsValid(addr)) {
         std::cerr << current_time_format() << " | Invalid IP address format. Try again." << std::endl;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return getCommand();
     }
     if(cmd.amount < 0) {
         std::cerr << current_time_format() << " | Amount must be positive. Try again." << std::endl;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
         return getCommand();
     }
 

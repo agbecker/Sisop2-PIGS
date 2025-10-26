@@ -23,7 +23,9 @@ std::mutex mtx_events;
 
 ServerStats stats;
 
-void add_clients();
+std::fstream transaction_history;
 
+void add_clients();
+void initializeLogFile(std::fstream& handler, const std::string& logPath);
 
 #endif
