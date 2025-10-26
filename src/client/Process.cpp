@@ -101,7 +101,7 @@ string Process::sendToServer(string request) {
 
     // Prepara conexão
     server.sin_family = AF_INET;     
-	server.sin_port = htons(PORT);
+	server.sin_port = htons(port);
     server.sin_addr = this->serv_addr;
 
     // Envia

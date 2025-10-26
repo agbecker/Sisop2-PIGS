@@ -14,9 +14,9 @@ void Process::run() {
         return;
     }
 
-    // Inicializa socket (IPv4, porta PORT, recebe de qualquer endereço)
+    // Inicializa socket (IPv4, porta port, recebe de qualquer endereço)
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(PORT);
+	serv_addr.sin_port = htons(port);
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
 	bzero(&(serv_addr.sin_zero), 8);    
 	
