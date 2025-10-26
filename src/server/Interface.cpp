@@ -12,10 +12,10 @@ inline std::string current_time_format() {
     return string_stream.str();
 }
 
-void Interface::show_stats(bool duplicate) {
+void Interface::show_stats(bool duplicate, ServerStats stats) {
     // Mostra dados do servidor
 
-    cout << "num_transactions " << num_transactions;
+    cout << "num_transactions " << stats.num_transactions;
     // Quebra de linha se não for duplicado
     if(duplicate) {
         cout << " ";
@@ -24,7 +24,7 @@ void Interface::show_stats(bool duplicate) {
         cout << endl;
     }
 
-    cout << "total_transferred " << total_transferred << " total_balance " << total_balance << endl << endl;
+    cout << "total_transferred " << stats.total_transferred << " total_balance " << stats.num_clients*STARTING_BALANCE << endl << endl;
     
 }
 
@@ -36,12 +36,12 @@ void Interface::display_event(Event event) {
     }
 
     cout << " id_req " << event.seq_num << " dest " << event.destination << " value " << event.value << endl;
-    show_stats(event.duplicate);
+    show_stats(event.duplicate, event.stats);
 }
 
 void Interface::run() {
     // Impressão de inicialização
-    cout << current_time_format() << " num_transactions " << num_transactions << " total_transferred " << total_transferred << " total_balance " << total_balance << endl;
+    cout << current_time_format() << " num_transactions " << 0 << " total_transferred " << 0 << " total_balance " << 0 << endl;
 
     while(true) {
         while(events->empty()); // Aguarda ocorrer um evento

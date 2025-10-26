@@ -20,10 +20,10 @@ std::mutex mutex_client_list;
 std::queue<std::string> clients_to_add;
 std::mutex mutex_new_clients;
 
-int total_balance;
-
 std::queue<Event> events;
 std::mutex mtx_events;
+
+ServerStats stats;
 
 void add_clients();
 

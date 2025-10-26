@@ -38,8 +38,9 @@ class Process {
         void sendReply(struct sockaddr_in cli_addr, int status, int new_balance, int seq_num);
         std::queue<Event> *events;
         std::mutex *mtx_events;
+        ServerStats *stats;
     public:
-        Process (std::map<std::string, ClientData> *c, std::mutex* mtx, std::queue<Event> *e, std::mutex *mtxe): clients(c), mtx_clients(mtx), events(e), mtx_events(mtxe) {};
+        Process (std::map<std::string, ClientData> *c, std::mutex* mtx, std::queue<Event> *e, std::mutex *mtxe, ServerStats *st): clients(c), mtx_clients(mtx), events(e), mtx_events(mtxe), stats(st) {};
         void run();
 };
 

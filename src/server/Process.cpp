@@ -66,7 +66,8 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
 
         // Registra duplicata na fila de eventos
         if(seq_server <= seq_sender) {
-            Event event(amount, seq_sender, ip_sender, ip_receiver, true);
+            ServerStats cur_stats = *stats;
+            Event event(amount, seq_sender, ip_sender, ip_receiver, true, cur_stats);
             mtx_events->lock();
             events->push(event);
             mtx_events->unlock();
@@ -104,10 +105,15 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
     (*clients)[ip_receiver].balance += amount;
     (*clients)[ip_sender].seq_num++;
 
+    // Atualiza dados do servidor
+    stats->num_transactions++;
+    stats->total_transferred += amount;
+
     int new_balance = (*clients)[ip_sender].balance; // Salva novo saldo do cliente para retornar
 
     // Registra na fila de eventos
-    Event event(amount, seq_sender, ip_sender, ip_receiver, false);
+    ServerStats cur_stats = *stats;
+    Event event(amount, seq_sender, ip_sender, ip_receiver, false, cur_stats);
     mtx_events->lock();
     events->push(event);
     mtx_events->unlock();
