@@ -63,6 +63,15 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
     // Verifica numero de sequencia
     int seq_server = (*clients)[ip_sender].seq_num;
     if(seq_server != seq_sender-1) {
+
+        // Registra duplicata na fila de eventos
+        if(seq_server <= seq_sender) {
+            Event event(amount, seq_sender, ip_sender, ip_receiver, true);
+            mtx_events->lock();
+            events->push(event);
+            mtx_events->unlock();
+        }
+
         sendReply(cli_addr, RR_NUMBER, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
         mtx_clients->unlock();
         return;
@@ -96,6 +105,12 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
     (*clients)[ip_sender].seq_num++;
 
     int new_balance = (*clients)[ip_sender].balance; // Salva novo saldo do cliente para retornar
+
+    // Registra na fila de eventos
+    Event event(amount, seq_sender, ip_sender, ip_receiver, false);
+    mtx_events->lock();
+    events->push(event);
+    mtx_events->unlock();
 
     // Responde com ok
     sendReply(cli_addr, RR_OK, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);

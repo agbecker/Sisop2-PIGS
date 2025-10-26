@@ -29,12 +29,12 @@ typedef struct RequestReply
 
 // Struct usada para comunicação entre threads do servidor
 typedef struct Event
-{   int status;
-    int value;
+{   int value;
     int seq_num;
     std::string origin;
     std::string destination;
     bool duplicate;
+    Event(int v, int n, std::string o, std::string d, bool dp): value(v), seq_num(n), origin(o), destination(d), duplicate(dp) {};
 } Event;
 
 #endif

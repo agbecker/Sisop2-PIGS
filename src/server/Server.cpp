@@ -9,13 +9,13 @@ int main() {
     // Thread para monitorar a adição de clientes à lista
     thread t_add_clients(add_clients);
 
-    Interface interface(&events);
+    Interface interface(&events, &mtx_events);
     thread t_interface(&Interface::run, &interface);
 
     Discovery discovery(clients_to_add, mutex_new_clients);
     thread t_discovery(&Discovery::awaitRequest, &discovery);
 
-    Process process(&clients, &mutex_client_list, &events);
+    Process process(&clients, &mutex_client_list, &events, &mtx_events);
     thread t_process(&Process::run, &process);
 
     // Debug

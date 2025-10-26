@@ -23,6 +23,7 @@ std::mutex mutex_new_clients;
 int total_balance;
 
 std::queue<Event> events;
+std::mutex mtx_events;
 
 void add_clients();
 
