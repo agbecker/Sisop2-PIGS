@@ -8,7 +8,4 @@
 #include <sys/socket.h>
 #include "../Utils.h"
 
-struct sockaddr_in getOwnIP();
-
-
 #endif

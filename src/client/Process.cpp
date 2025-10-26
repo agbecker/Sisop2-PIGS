@@ -18,7 +18,6 @@ void Process::run() {
         string message = request.dump(4);
 
         // Envia para o servidor
-        rr->status = RR_WAITING;
         string ack = sendToServer(message);
 
         // Faz parsing da resposta
