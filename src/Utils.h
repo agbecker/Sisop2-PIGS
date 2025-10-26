@@ -21,12 +21,31 @@ typedef struct RequestReply
 #define RR_CONNECT 8    // Erro de conexão
 #define RR_NOTONLIST 9  // IP destinatário não consta na lista de clientes
 
+#define STARTING_BALANCE 1000
 
 #define TIMEOUT 10      // Tempo limite de time-out (em ms)
 
 #define DISCOVERY_ASK "WHERE IS SERVER OINK"
 #define DISCOVERY_REPLY "SERVER HERE OINK"
 
+// Armazena os dados numéricos do servidor em um dado momento
+typedef struct ServerStats
+{
+    unsigned int num_clients;
+    long unsigned int total_transferred;
+    unsigned int num_transactions;
+    ServerStats(): num_clients(0), total_transferred(0), num_transactions(0) {};
+} ServerStats;
 
+// Struct usada para comunicação entre threads do servidor
+typedef struct Event
+{   int value;
+    int seq_num;
+    std::string origin;
+    std::string destination;
+    bool duplicate;
+    ServerStats stats;
+    Event(int v, int n, std::string o, std::string d, bool dp, ServerStats st): value(v), seq_num(n), origin(o), destination(d), duplicate(dp), stats(st) {};
+} Event;
 
 #endif

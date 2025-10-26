@@ -12,10 +12,8 @@ void Discovery::run() {
 }
 
 void Discovery::treat_request (string message, struct sockaddr_in cli_addr) {
-    // Debug
+
     string client_ip = inet_ntoa(cli_addr.sin_addr); // Salva IP recebido como string
-    cout << "Recebi mensagem do " << client_ip << endl;
-    cout << "A mensagem diz: " << message << endl;
 
     if (message != DISCOVERY_ASK)
         return;
@@ -40,8 +38,6 @@ void Discovery::awaitRequest() {
 		perror("ERROR opening socket");
         return;
     }
-    // Debug
-    printf("Passou pela criacao do socket\n");
 
     // Inicializa socket (IPv4, porta BROADCAST_PORT, aceita conexão de qualquer lugar)
 	serv_addr.sin_family = AF_INET;

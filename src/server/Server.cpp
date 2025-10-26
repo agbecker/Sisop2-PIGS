@@ -2,30 +2,29 @@
 using namespace std;
 
 int main() {
-    total_balance = 0;
-
     // Thread para a interface do servidor
+    Interface interface(&events, &mtx_events);
+    thread t_interface(&Interface::run, &interface);
 
     // Thread para monitorar a adição de clientes à lista
     thread t_add_clients(add_clients);
 
+    // Thread para descoberta de novos clientes
     Discovery discovery(clients_to_add, mutex_new_clients);
     thread t_discovery(&Discovery::awaitRequest, &discovery);
 
-    Process process(&clients, &mutex_client_list);
+    // Thread para processamento de requisições
+    Process process(&clients, &mutex_client_list, &events, &mtx_events, &stats);
     thread t_process(&Process::run, &process);
 
     // Debug
     clients_to_add.push("1.2.3.4");
 
-    while(!t_discovery.joinable() && !t_process.joinable());
+    // Aguarda encerramento do programa
+    while(!t_discovery.joinable() && !t_process.joinable() && !t_discovery.joinable());
     t_discovery.join();
     t_process.join();
-    discovery.awaitRequest();
-
-    // Thread do serviço de processamento
-
-    // Fica inoperante até o encerramento do programa
+    t_discovery.join(); 
 
     return 0;
 }
@@ -45,11 +44,6 @@ void add_clients() {
 
         // Verifica se já consta na lista
         if (clients.find(ip) != clients.end()) {
-            
-
-            // Debug
-            cout << "O cliente " << ip << " já consta na lista" << endl;
-
             continue; // Se já consta, não faz nada
         }
 
@@ -57,13 +51,8 @@ void add_clients() {
         ClientData new_client(ip,STARTING_BALANCE,0); // Cria novo cliente
         mutex_client_list.lock();
         clients.insert({ip, new_client});
+        stats.num_clients++;
         mutex_client_list.unlock();
-
-        // Atualiza o saldo
-        total_balance += STARTING_BALANCE;
-
-        // Debug
-        cout << "Adicionei o cliente " << ip << " à lista" << endl;
 
     }
 }

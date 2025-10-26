@@ -14,9 +14,6 @@ void Process::run() {
         return;
     }
 
-    // Debug
-	printf("passou pela criacao do socket\n");
-
     // Inicializa socket (IPv4, porta PORT, recebe de qualquer endereço)
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(PORT);
@@ -30,10 +27,6 @@ void Process::run() {
         return;
     }
 
-    // Debug
-	printf("passou pelo bind\n");
-
-
 	while(true) {
 		bzero(buf, BUFFER_SIZE); // Limpa o buffer
 		
@@ -44,9 +37,6 @@ void Process::run() {
             perror("ERROR on recvfrom");
             continue;
         }
-
-        // Debug
-		printf("Recebi o seguinte datagrama: %s\n", buf);
 		
 		// Processa a requisição
         string message = buf;
@@ -73,6 +63,16 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
     // Verifica numero de sequencia
     int seq_server = (*clients)[ip_sender].seq_num;
     if(seq_server != seq_sender-1) {
+
+        // Registra duplicata na fila de eventos
+        if(seq_server <= seq_sender) {
+            ServerStats cur_stats = *stats;
+            Event event(amount, seq_sender, ip_sender, ip_receiver, true, cur_stats);
+            mtx_events->lock();
+            events->push(event);
+            mtx_events->unlock();
+        }
+
         sendReply(cli_addr, RR_NUMBER, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
         mtx_clients->unlock();
         return;
@@ -105,14 +105,18 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
     (*clients)[ip_receiver].balance += amount;
     (*clients)[ip_sender].seq_num++;
 
-    // Debug
-    cout << "Sender é " << ip_sender << " e receiver é " << ip_receiver << endl;
+    // Atualiza dados do servidor
+    stats->num_transactions++;
+    stats->total_transferred += amount;
 
     int new_balance = (*clients)[ip_sender].balance; // Salva novo saldo do cliente para retornar
 
-    // Debug
-    cout << "O novo saldo do cliente é " << new_balance << " e a nova seq é " << (*clients)[ip_sender].seq_num << endl;
-    cout << "O novo saldo do cliente favorecido é " << (*clients)[ip_receiver].balance << endl;
+    // Registra na fila de eventos
+    ServerStats cur_stats = *stats;
+    Event event(amount, seq_sender, ip_sender, ip_receiver, false, cur_stats);
+    mtx_events->lock();
+    events->push(event);
+    mtx_events->unlock();
 
     // Responde com ok
     sendReply(cli_addr, RR_OK, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
