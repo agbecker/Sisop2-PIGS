@@ -9,7 +9,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-#define PORT 5000
 #define BUFFER_SIZE 256
 
 class Process {
@@ -18,8 +17,9 @@ class Process {
         RequestReply* rr;
         std::string sendToServer(std::string request);
         struct in_addr serv_addr;
+        int port;
     public:
-        Process(struct in_addr serv, RequestReply* r): num_seq(1), rr(r), serv_addr(serv) {};
+        Process(int p, struct in_addr serv, RequestReply* r):port(p), num_seq(1), rr(r), serv_addr(serv) {};
         void run();
 };
 

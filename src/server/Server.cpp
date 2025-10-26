@@ -1,7 +1,15 @@
 #include "Server.h"
 using namespace std;
 
-int main() {
+int main(int argc, char **argv) {
+    // Obtém porta
+    if(argc < 2) {
+        cout << "Informe o número de porta" << endl;
+        return 1;
+    }
+
+    int port = stoi(argv[1]);
+
     // Thread para a interface do servidor
     Interface interface(&events, &mtx_events);
     thread t_interface(&Interface::run, &interface);
@@ -14,7 +22,7 @@ int main() {
     thread t_discovery(&Discovery::awaitRequest, &discovery);
 
     // Thread para processamento de requisições
-    Process process(&clients, &mutex_client_list, &events, &mtx_events, &stats);
+    Process process(port, &clients, &mutex_client_list, &events, &mtx_events, &stats);
     thread t_process(&Process::run, &process);
 
     // Debug

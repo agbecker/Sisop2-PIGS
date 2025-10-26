@@ -17,7 +17,6 @@
 #include "../json.hpp"
 #include "../Utils.h"
 
-#define PORT 5000 // Porta para recebimento de mensagens
 #define BUFFER_SIZE 256
 
 struct ClientData {
@@ -39,8 +38,9 @@ class Process {
         std::queue<Event> *events;
         std::mutex *mtx_events;
         ServerStats *stats;
+        int port; // Porta para conexão UDP
     public:
-        Process (std::map<std::string, ClientData> *c, std::mutex* mtx, std::queue<Event> *e, std::mutex *mtxe, ServerStats *st): clients(c), mtx_clients(mtx), events(e), mtx_events(mtxe), stats(st) {};
+        Process (int p, std::map<std::string, ClientData> *c, std::mutex* mtx, std::queue<Event> *e, std::mutex *mtxe, ServerStats *st): port(p), clients(c), mtx_clients(mtx), events(e), mtx_events(mtxe), stats(st) {};
         void run();
 };
 

@@ -12,8 +12,6 @@
 #include <chrono>
 #include <mutex>
 
-#define STARTING_BALANCE 1000
-
 std::map<std::string, ClientData> clients;
 std::mutex mutex_client_list;
 
