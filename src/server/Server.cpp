@@ -1,5 +1,6 @@
 #include "Server.h"
 using namespace std;
+namespace fs = std::filesystem;
 
 int main(int argc, char **argv) {
     // Obtém porta
@@ -11,7 +12,9 @@ int main(int argc, char **argv) {
     int port = stoi(argv[1]);
 
     // Thread para a interface do servidor
-    Interface interface(&events, &mtx_events);
+    initializeLogFile(transaction_history, TRANSACTION_HISTORY_FILEPATH);
+
+    Interface interface(&events, &mtx_events, &transaction_history);
     thread t_interface(&Interface::run, &interface);
 
     // Thread para monitorar a adição de clientes à lista
@@ -62,5 +65,44 @@ void add_clients() {
         stats.num_clients++;
         mutex_client_list.unlock();
 
+    }
+}
+
+
+
+// inicializa handler de arquivos - cria caminho esperado caso nao exista
+void initializeLogFile(std::fstream& handler, const std::string& logPath) {
+    const std::string PATH = logPath;
+    
+    // Primeira tentativa de abertura
+    handler.open(PATH, std::ios::in | std::ios::out | std::ios::trunc);
+    
+    if (!handler.is_open()) {
+        // std::cout << "Arquivo não encontrado. Criando caminho esperado..." << std::endl;
+        
+        try {
+            // Extrai o diretório do caminho
+            fs::path pathObj(PATH);
+            fs::path directory = pathObj.parent_path();
+            
+            // Cria o diretório se não existir e for necessário
+            if (!directory.empty() && !fs::exists(directory)) {
+                if (fs::create_directories(directory)) {
+                    // std::cout << "Diretório criado: " << directory << std::endl;
+                }
+            }
+            
+            handler.open(PATH, std::ios::in | std::ios::out | std::ios::trunc);
+            if (handler.is_open()) {
+                // std::cout << "Arquivo de log criado com sucesso: " << PATH << std::endl;
+            } else {
+                std::cerr << "Falha ao criar arquivo após criar diretórios: " << PATH << std::endl;
+            }
+            
+        } catch (const fs::filesystem_error& ex) {
+            std::cerr << "Erro no filesystem: " << ex.what() << std::endl;
+        }
+    } else {
+        // std::cout << "Arquivo de log aberto com sucesso: " << PATH << std::endl;
     }
 }

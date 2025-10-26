@@ -28,6 +28,8 @@ typedef struct RequestReply
 #define DISCOVERY_ASK "WHERE IS SERVER OINK"
 #define DISCOVERY_REPLY "SERVER HERE OINK"
 
+#define TRANSACTION_HISTORY_FILEPATH "./log/transaction_history.log.txt"
+
 // Armazena os dados numéricos do servidor em um dado momento
 typedef struct ServerStats
 {

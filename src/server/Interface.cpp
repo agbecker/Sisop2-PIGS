@@ -39,6 +39,14 @@ void Interface::display_event(Event event) {
     show_stats(event.duplicate, event.stats);
 }
 
+void Interface::register_event(Event event) {
+    *transaction_history << current_time_format() << " client " << event.origin;
+    *transaction_history << " id_req " << event.seq_num << " dest " << event.destination << " value " << event.value << "\n";
+    *transaction_history << "num_transactions " << event.stats.num_transactions;
+    *transaction_history << "\n";
+    *transaction_history << "total_transferred " << event.stats.total_transferred << " total_balance " << event.stats.num_clients*STARTING_BALANCE << "\n" << "\n";
+}
+
 void Interface::run() {
     // Impressão de inicialização
     cout << current_time_format() << " num_transactions " << 0 << " total_transferred " << 0 << " total_balance " << 0 << endl;
@@ -53,5 +61,10 @@ void Interface::run() {
         mtx_event->unlock();
 
         display_event(event);
+
+        if (!event.duplicate) {
+            register_event(event);
+        }   
     }
 }
+
