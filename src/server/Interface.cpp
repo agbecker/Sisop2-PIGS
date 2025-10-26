@@ -45,6 +45,7 @@ void Interface::register_event(Event event) {
     *transaction_history << "num_transactions " << event.stats.num_transactions;
     *transaction_history << "\n";
     *transaction_history << "total_transferred " << event.stats.total_transferred << " total_balance " << event.stats.num_clients*STARTING_BALANCE << "\n" << "\n";
+    transaction_history->flush();
 }
 
 void Interface::run() {
