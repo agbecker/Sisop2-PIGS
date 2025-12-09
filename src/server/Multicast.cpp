@@ -1,5 +1,7 @@
 #include "Multicast.h"
 
+using namespace std;
+
 // Ingressa no grupo multicast de comunicação entre as réplicas
 void Multicast::init() {
     sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -80,4 +82,32 @@ void Multicast::find_others(bool* is_only_server) {
 
     // Nenhuma resposta
     *is_only_server = true;
+}
+
+void send_ack(int sock, sockaddr_in target) {
+    const char* msg = MC_DISCOVERY_ACK;
+    sendto(sock, msg, strlen(msg), 0,
+           (sockaddr*)&target, sizeof(target));
+}
+
+// Aguarda novas réplicas mandarem mensagem e responde
+void Multicast::welcome_new_replicas() {
+    char buffer[256];
+    while (true) {
+        sockaddr_in sender{};
+        socklen_t sender_len = sizeof(sender);
+
+        ssize_t n = recvfrom(sock, buffer, sizeof(buffer) - 1, 0,
+                             (sockaddr*)&sender, &sender_len);
+
+        if (n <= 0) continue;
+
+        buffer[n] = '\0';
+
+        if (strcmp(buffer, MC_DISCOVERY_ASK) == 0) {
+            // Cria uma thread para enviar a resposta
+            thread t(send_ack, sock, sender);
+            t.detach(); // thread independente
+        }
+    }
 }

@@ -13,25 +13,28 @@ int main(int argc, char **argv) {
     id = stoi(argv[2]);
 
     // Ingressa no multicast
-    Multicast multicast;
-    multicast.init();
+    Multicast* multicast = new Multicast();
+    multicast->init();
 
     // Verifica se há outro servidor já conectado
-    multicast.find_others(&is_replica_manager);
+    multicast->find_others(&is_replica_manager);
 
     if(is_replica_manager) {
-        main_manager();
+        main_manager(multicast);
     }
 
     else {
-        main_backup();
+        main_backup(multicast);
     }
 
     return 0;
 }
 
 // Operações do Replica Manager quando ele vem ao poder
-void main_manager() {
+void main_manager(Multicast* multicast) {
+    // Thread de multicast para acolher novas réplicas
+    thread t_replica_discovery(&Multicast::welcome_new_replicas, multicast);
+
     // Thread para a interface do servidor
     initializeLogFile(transaction_history, TRANSACTION_HISTORY_FILEPATH);
 
@@ -62,7 +65,7 @@ void main_manager() {
 }
 
 // Operações de uma réplica
-void main_backup() {
+void main_backup(Multicast* multicast) {
     return;
 }
 
