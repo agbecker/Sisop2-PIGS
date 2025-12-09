@@ -16,6 +16,9 @@ int main(int argc, char **argv) {
     Multicast multicast;
     multicast.init();
 
+    // Verifica se há outro servidor já conectado
+    multicast.find_others(&is_replica_manager);
+
     // Thread para a interface do servidor
     initializeLogFile(transaction_history, TRANSACTION_HISTORY_FILEPATH);
 

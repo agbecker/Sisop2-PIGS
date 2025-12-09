@@ -8,9 +8,14 @@ void Multicast::init() {
         return;
     }
 
+    // Permite múltiplos binds na mesma porta
     int reuse = 1;
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
                &reuse, sizeof(reuse));
+
+    // Configura que não recebe as próprias mensagens
+    int loop = 0; // 0 desativa, 1 ativa
+    setsockopt(sock, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
 
     sockaddr_in local{};
     local.sin_family = AF_INET;
@@ -24,7 +29,7 @@ void Multicast::init() {
     }
 
     ip_mreq mreq{};
-    inet_pton(AF_INET, "239.0.0.1", &mreq.imr_multiaddr);
+    inet_pton(AF_INET, MCAST_IP, &mreq.imr_multiaddr);
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
 
     if (setsockopt(sock, IPPROTO_IP,
@@ -33,4 +38,46 @@ void Multicast::init() {
         perror("IP_ADD_MEMBERSHIP");
         return;
     }
+}
+
+void Multicast::find_others(bool* is_only_server) {
+    // Endereço do grupo multicast
+    sockaddr_in group{};
+    group.sin_family = AF_INET;
+    group.sin_port = htons(12345);
+    inet_pton(AF_INET, MCAST_IP, &group.sin_addr);
+
+    const char* msg = MC_DISCOVERY_ASK;
+
+    // Envia a mensagem multicast
+    sendto(sock, msg, strlen(msg), 0, (sockaddr*)&group, sizeof(group));
+
+    // Configura timeout de 10ms
+    fd_set readfds;
+    FD_ZERO(&readfds);
+    FD_SET(sock, &readfds);
+
+    timeval tv{};
+    tv.tv_sec = 0;
+    tv.tv_usec = 10000; // 10 ms
+
+    // Espera por qualquer resposta
+    int ret = select(sock + 1, &readfds, nullptr, nullptr, &tv);
+
+    if (ret > 0 && FD_ISSET(sock, &readfds)) {
+        // Alguma resposta chegou
+        char buffer[256];
+        sockaddr_in sender{};
+        socklen_t sender_len = sizeof(sender);
+        ssize_t n = recvfrom(sock, buffer, sizeof(buffer) - 1, 0,
+                             (sockaddr*)&sender, &sender_len);
+        if (n > 0) {
+            buffer[n] = '\0';
+            *is_only_server = false; // alguém respondeu
+            return;
+        }
+    }
+
+    // Nenhuma resposta
+    *is_only_server = true;
 }
