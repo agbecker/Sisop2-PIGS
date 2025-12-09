@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    int port = stoi(argv[1]);
+    port = stoi(argv[1]);
     id = stoi(argv[2]);
 
     // Ingressa no multicast
@@ -19,6 +19,19 @@ int main(int argc, char **argv) {
     // Verifica se há outro servidor já conectado
     multicast.find_others(&is_replica_manager);
 
+    if(is_replica_manager) {
+        main_manager();
+    }
+
+    else {
+        main_backup();
+    }
+
+    return 0;
+}
+
+// Operações do Replica Manager quando ele vem ao poder
+void main_manager() {
     // Thread para a interface do servidor
     initializeLogFile(transaction_history, TRANSACTION_HISTORY_FILEPATH);
 
@@ -45,7 +58,12 @@ int main(int argc, char **argv) {
     t_process.join();
     t_discovery.join(); 
 
-    return 0;
+    return;
+}
+
+// Operações de uma réplica
+void main_backup() {
+    return;
 }
 
 

@@ -26,10 +26,14 @@ ServerStats stats;
 
 std::fstream transaction_history;
 
+int port;
 int id;
 bool is_replica_manager;
 
 void add_clients();
 void initializeLogFile(std::fstream& handler, const std::string& logPath);
+
+void main_manager();
+void main_backup();
 
 #endif
