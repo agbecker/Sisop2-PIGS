@@ -4,6 +4,7 @@
 #include "Discovery.h"
 #include "Process.h"
 #include "Interface.h"
+#include "Multicast.h"
 #include <string>
 #include <map>
 #include <queue>

@@ -13,6 +13,7 @@ add_executable(server_pigs
     src/server/Interface.cpp
     src/server/Discovery.cpp
     src/server/Process.cpp
+    src/server/Multicast.cpp
 )
 
 add_executable(client_pigs
