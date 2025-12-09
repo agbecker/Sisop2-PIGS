@@ -30,25 +30,20 @@ void Multicast::init() {
         return;
     }
 
-    ip_mreq mreq{};
-    inet_pton(AF_INET, MCAST_IP, &mreq.imr_multiaddr);
-    mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-
-    if (setsockopt(sock, IPPROTO_IP,
-                   IP_ADD_MEMBERSHIP,
-                   &mreq, sizeof(mreq)) < 0) {
-        perror("IP_ADD_MEMBERSHIP");
-        return;
-    }
-}
-
-void Multicast::find_others(bool* is_only_server) {
-    // Endereço do grupo multicast
-    sockaddr_in group{};
+    // Define o grupo multicast uma vez
+    memset(&group, 0, sizeof(group));
     group.sin_family = AF_INET;
     group.sin_port = htons(12345);
     inet_pton(AF_INET, MCAST_IP, &group.sin_addr);
 
+    // Adiciona ao grupo multicast
+    ip_mreq mreq{};
+    inet_pton(AF_INET, MCAST_IP, &mreq.imr_multiaddr);
+    mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+    setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+}
+
+void Multicast::find_others(bool* is_only_server) {
     const char* msg = MC_DISCOVERY_ASK;
 
     // Envia a mensagem multicast
@@ -109,5 +104,18 @@ void Multicast::welcome_new_replicas() {
             thread t(send_ack, sock, sender);
             t.detach(); // thread independente
         }
+    }
+}
+
+// Dá um sinal periódico às réplicas para avisar que o servidor ainda está ativo
+void Multicast::heartbeat() {
+    const char* msg = HEARTBEAT;
+
+    while (true) {
+        sendto(sock, msg, strlen(msg), 0,
+               (sockaddr*)&group, sizeof(group));
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(HEARTBEAT_PERIOD));
+        cout << HEARTBEAT << endl;
     }
 }
