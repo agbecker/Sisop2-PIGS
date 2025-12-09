@@ -25,7 +25,11 @@ ServerStats stats;
 
 std::fstream transaction_history;
 
+int socket_multicast;
+int id;
+
 void add_clients();
 void initializeLogFile(std::fstream& handler, const std::string& logPath);
+void open_multicast();
 
 #endif

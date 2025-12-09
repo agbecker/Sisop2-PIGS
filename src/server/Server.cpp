@@ -4,12 +4,16 @@ namespace fs = std::filesystem;
 
 int main(int argc, char **argv) {
     // Obtém porta
-    if(argc < 2) {
-        cout << "Informe o número de porta" << endl;
+    if(argc < 3) {
+        cout << "Informe o número de porta e o ID do processo" << endl;
         return 1;
     }
 
     int port = stoi(argv[1]);
+    id = stoi(argv[2]);
+
+    // Ingressa no multicast
+    open_multicast();
 
     // Thread para a interface do servidor
     initializeLogFile(transaction_history, TRANSACTION_HISTORY_FILEPATH);
@@ -104,5 +108,40 @@ void initializeLogFile(std::fstream& handler, const std::string& logPath) {
         }
     } else {
         // std::cout << "Arquivo de log aberto com sucesso: " << PATH << std::endl;
+    }
+}
+
+// Ingressa no grupo multicast de comunicação entre as réplicas
+void open_multicast() {
+    socket_multicast = socket(AF_INET, SOCK_DGRAM, 0);
+    if (socket_multicast < 0) {
+        perror("socket");
+        return;
+    }
+
+    int reuse = 1;
+    setsockopt(socket_multicast, SOL_SOCKET, SO_REUSEADDR,
+               &reuse, sizeof(reuse));
+
+    sockaddr_in local{};
+    local.sin_family = AF_INET;
+    local.sin_port = htons(12345);
+    local.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    if (bind(socket_multicast,
+             (sockaddr*)&local, sizeof(local)) < 0) {
+        perror("bind");
+        return;
+    }
+
+    ip_mreq mreq{};
+    inet_pton(AF_INET, "239.0.0.1", &mreq.imr_multiaddr);
+    mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+
+    if (setsockopt(socket_multicast, IPPROTO_IP,
+                   IP_ADD_MEMBERSHIP,
+                   &mreq, sizeof(mreq)) < 0) {
+        perror("IP_ADD_MEMBERSHIP");
+        return;
     }
 }
