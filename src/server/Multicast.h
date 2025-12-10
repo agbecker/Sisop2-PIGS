@@ -26,6 +26,7 @@ class Multicast {
         void welcome_new_replicas();
         void heartbeat();
         void send_to_replicas(std::string data);
+        void await_backup_data();
 };
 
 void send_ack(int sock, sockaddr_in target);

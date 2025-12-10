@@ -137,3 +137,31 @@ void Multicast::send_to_replicas(std::string data) {
     }
 
 }
+
+void Multicast::await_backup_data() {
+    char buffer[8192]; // tamanho razoável para JSON
+
+    while (true) {
+        sockaddr_in sender{};
+        socklen_t sender_len = sizeof(sender);
+
+        ssize_t n = recvfrom(
+            sock,
+            buffer,
+            sizeof(buffer) - 1,
+            0,
+            (sockaddr*)&sender,
+            &sender_len
+        );
+
+        if (n <= 0)
+            continue;
+
+        buffer[n] = '\0';
+        std::string json_data(buffer);
+
+        // Encaminha para atualização dos dados no backup
+        // update_client_data(json_data);
+        cout << buffer << endl;
+    }
+}
