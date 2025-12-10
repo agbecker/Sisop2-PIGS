@@ -161,8 +161,12 @@ void Multicast::always_listening() {
         buffer[n] = '\0';
         std::string received_msg(buffer);
 
-        if(received_msg == HEARTBEAT) {
+        if(received_msg[0] == 'O') {
             // reset_heartbeat_counter();
+        }
+
+        else if(received_msg[0] == 'E') {
+            // partake_in_election();
         }
 
         else {
