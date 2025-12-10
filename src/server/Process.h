@@ -16,6 +16,7 @@
 
 #include "../json.hpp"
 #include "../Utils.h"
+#include "Multicast.h"
 
 #define BUFFER_SIZE 256
 
@@ -39,9 +40,13 @@ class Process {
         std::mutex *mtx_events;
         ServerStats *stats;
         int port; // Porta para conexão UDP
+        Multicast* multicast;
     public:
-        Process (int p, std::map<std::string, ClientData> *c, std::mutex* mtx, std::queue<Event> *e, std::mutex *mtxe, ServerStats *st): port(p), clients(c), mtx_clients(mtx), events(e), mtx_events(mtxe), stats(st) {};
+        Process (int p, std::map<std::string, ClientData> *c, std::mutex* mtx, std::queue<Event> *e, std::mutex *mtxe, ServerStats *st, Multicast *m): port(p), clients(c), mtx_clients(mtx), events(e), mtx_events(mtxe), stats(st), multicast(m) {};
         void run();
+
 };
+
+std::string serialize_clients(const std::map<std::string, ClientData>* clients);
 
 #endif
