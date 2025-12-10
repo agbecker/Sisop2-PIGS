@@ -43,68 +43,41 @@ void Multicast::init() {
     setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
 }
 
+// Aguarda ver se já tem um servidor principal mandando heartbeats
+// Senão, assume o papel de principal
 void Multicast::find_others(bool* is_only_server) {
-    const char* msg = MC_DISCOVERY_ASK;
-
-    // Envia a mensagem multicast
-    sendto(sock, msg, strlen(msg), 0, (sockaddr*)&group, sizeof(group));
-
-    // Configura timeout de 10ms
+    // Configura timeout total
     fd_set readfds;
     FD_ZERO(&readfds);
     FD_SET(sock, &readfds);
 
     timeval tv{};
     tv.tv_sec = 0;
-    tv.tv_usec = 10000; // 10 ms
+    tv.tv_usec = HEARTBEAT_PERIOD * 1000 * 4;
 
-    // Espera por qualquer resposta
     int ret = select(sock + 1, &readfds, nullptr, nullptr, &tv);
 
     if (ret > 0 && FD_ISSET(sock, &readfds)) {
-        // Alguma resposta chegou
         char buffer[256];
         sockaddr_in sender{};
         socklen_t sender_len = sizeof(sender);
+
         ssize_t n = recvfrom(sock, buffer, sizeof(buffer) - 1, 0,
                              (sockaddr*)&sender, &sender_len);
+
         if (n > 0) {
             buffer[n] = '\0';
-            *is_only_server = false; // alguém respondeu
-            return;
+
+            // Agora só aceita se for HEARTBEAT
+            if (strcmp(buffer, HEARTBEAT) == 0) {
+                *is_only_server = false;
+                return;
+            }
         }
     }
 
-    // Nenhuma resposta
+    // Timeout ou mensagem inválida
     *is_only_server = true;
-}
-
-void send_ack(int sock, sockaddr_in target) {
-    const char* msg = MC_DISCOVERY_ACK;
-    sendto(sock, msg, strlen(msg), 0,
-           (sockaddr*)&target, sizeof(target));
-}
-
-// Aguarda novas réplicas mandarem mensagem e responde
-void Multicast::welcome_new_replicas() {
-    char buffer[256];
-    while (true) {
-        sockaddr_in sender{};
-        socklen_t sender_len = sizeof(sender);
-
-        ssize_t n = recvfrom(sock, buffer, sizeof(buffer) - 1, 0,
-                             (sockaddr*)&sender, &sender_len);
-
-        if (n <= 0) continue;
-
-        buffer[n] = '\0';
-
-        if (strcmp(buffer, MC_DISCOVERY_ASK) == 0) {
-            // Cria uma thread para enviar a resposta
-            thread t(send_ack, sock, sender);
-            t.detach(); // thread independente
-        }
-    }
 }
 
 // Dá um sinal periódico às réplicas para avisar que o servidor ainda está ativo

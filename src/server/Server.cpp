@@ -32,9 +32,6 @@ int main(int argc, char **argv) {
 
 // Operações do Replica Manager quando ele vem ao poder
 void main_manager(Multicast* multicast) {
-    // Thread de multicast para acolher novas réplicas
-    thread t_replica_discovery(&Multicast::welcome_new_replicas, multicast);
-
     // Thread multicast para dar sinais de vida periódicos
     thread t_heartbeat(&Multicast::heartbeat, multicast);
 
