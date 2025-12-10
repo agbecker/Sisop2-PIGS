@@ -8,8 +8,6 @@
 #include <thread>
 
 #define MCAST_IP "239.0.0.1"
-#define MC_DISCOVERY_ASK "ANYONE HERE OINK"
-#define MC_DISCOVERY_ACK "OINK OINK"
 
 #define HEARTBEAT "OINK OINK"
 #define HEARTBEAT_PERIOD 100
@@ -25,6 +23,8 @@ class Multicast {
         void find_others(bool* is_only_server);
         void welcome_new_replicas();
         void heartbeat();
+        void send_to_replicas(std::string data);
+        void always_listening();
 };
 
 void send_ack(int sock, sockaddr_in target);
