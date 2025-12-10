@@ -118,7 +118,12 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
     events->push(event);
     mtx_events->unlock();
 
-    // Responde com ok
+    // Envia dados atualizados para as réplicas
+    string serialized_data = serialize_clients(clients);
+    thread t_mcast_clients(&Multicast::send_to_replicas, multicast, serialized_data);
+    t_mcast_clients.detach();
+
+    // Responde com ok para o cliente
     sendReply(cli_addr, RR_OK, (*clients)[ip_sender].balance, (*clients)[ip_sender].seq_num);
     
     // Libera acesso à lista
@@ -156,4 +161,26 @@ void Process::sendReply(struct sockaddr_in cli_addr, int status, int new_balance
     }
 
     close(sockfd);
+}
+
+// Transforma todas as informações de clientes em JSON para enviar para as réplicas
+std::string serialize_clients(
+    const std::map<std::string, ClientData>* clients)
+{
+    std::string json = "{\"clients\":[";
+    bool first = true;
+
+    for (const auto& [ip, c] : *clients) {
+        if (!first) json += ",";
+        first = false;
+
+        json += "{";
+        json += "\"ip\":\"" + c.ip + "\",";
+        json += "\"balance\":" + std::to_string(c.balance) + ",";
+        json += "\"seq\":" + std::to_string(c.seq_num);
+        json += "}";
+    }
+
+    json += "]}";
+    return json;
 }

@@ -52,11 +52,11 @@ void main_manager(Multicast* multicast) {
     thread t_discovery(&Discovery::awaitRequest, &discovery);
 
     // Thread para processamento de requisições
-    Process process(port, &clients, &mutex_client_list, &events, &mtx_events, &stats);
+    Process process(port, &clients, &mutex_client_list, &events, &mtx_events, &stats, multicast);
     thread t_process(&Process::run, &process);
 
     // Debug
-    // clients_to_add.push("1.2.3.4");
+    clients_to_add.push("1.2.3.4");
 
     // Aguarda encerramento do programa
     while(!t_discovery.joinable() && !t_process.joinable() && !t_discovery.joinable());
@@ -69,6 +69,7 @@ void main_manager(Multicast* multicast) {
 
 // Operações de uma réplica
 void main_backup(Multicast* multicast) {
+    // Debug
     cout << "As passivas reinam" << endl;
     while(true);
     return;

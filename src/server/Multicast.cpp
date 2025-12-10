@@ -116,6 +116,24 @@ void Multicast::heartbeat() {
                (sockaddr*)&group, sizeof(group));
 
         std::this_thread::sleep_for(std::chrono::milliseconds(HEARTBEAT_PERIOD));
-        cout << HEARTBEAT << endl;
     }
+}
+
+// Envia string JSON com os dados dos clientes para o grupo multicast
+void Multicast::send_to_replicas(std::string data) {
+    if (sock < 0) return;
+
+    ssize_t sent = sendto(
+        sock,
+        data.c_str(),
+        data.size(),
+        0,
+        (sockaddr*)&group,
+        sizeof(group)
+    );
+
+    if (sent < 0) {
+        perror("sendto (send_to_replicas)");
+    }
+
 }

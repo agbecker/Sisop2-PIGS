@@ -25,6 +25,7 @@ class Multicast {
         void find_others(bool* is_only_server);
         void welcome_new_replicas();
         void heartbeat();
+        void send_to_replicas(std::string data);
 };
 
 void send_ack(int sock, sockaddr_in target);
