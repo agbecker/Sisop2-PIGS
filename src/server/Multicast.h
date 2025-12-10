@@ -23,10 +23,7 @@ class Multicast {
         Multicast() = default;
         void init();
         void find_others(bool* is_only_server);
-        void welcome_new_replicas();
         void heartbeat();
 };
-
-void send_ack(int sock, sockaddr_in target);
 
 #endif
