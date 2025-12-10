@@ -145,7 +145,7 @@ void Multicast::always_listening() {
         else {
 
             // Encaminha para atualização dos dados no backup
-            newest_update = 
+            newest_update = received_msg;
         }
     }
 }
