@@ -145,8 +145,7 @@ void Multicast::always_listening() {
         else {
 
             // Encaminha para atualização dos dados no backup
-            // update_client_data(json_data);
-            cout << buffer << endl;
+            newest_update = 
         }
     }
 }

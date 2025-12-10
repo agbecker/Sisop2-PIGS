@@ -10,6 +10,15 @@ typedef struct RequestReply
     std::string destination;
 } RequestReply;
 
+struct ClientData {
+    std::string ip; // IP do cliente, usado como chave
+    int balance; // Saldo do cliente
+    int seq_num; // Último número de sequência registrado do cliente
+
+    ClientData(std::string i, int b, int s): ip(i), balance(b), seq_num(s) {};
+    ClientData(): ip("0.0.0.0"), balance(0), seq_num(-1) {};
+};
+
 // Status possíveis:
 #define RR_INVALID 1    // O dado não tem significado, não deve ser processado
 #define RR_SEND 2       // O dado é válido e deve ser enviado ao servidor

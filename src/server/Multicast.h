@@ -6,6 +6,8 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <thread>
+#include <queue>
+#include <mutex>
 
 #define MCAST_IP "239.0.0.1"
 
