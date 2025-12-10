@@ -19,6 +19,7 @@ class Multicast {
         int sock;
         sockaddr_in group;
         int heartbeat_counter;
+        std::mutex *mtx_heartbeat_counter;
         std::string newest_update;
 
     public:
@@ -28,6 +29,7 @@ class Multicast {
         void heartbeat();
         void send_to_replicas(std::string data);
         void always_listening();
+        void monitor_rm_heartbeat();
 };
 
 #endif
