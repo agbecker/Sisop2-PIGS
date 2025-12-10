@@ -65,10 +65,11 @@ void main_manager(Multicast* multicast) {
 }
 
 // Operações de uma réplica
-void main_backup(Multicast* multicast) {
-    // Debug
-    // cout << "As passivas reinam" << endl;
-    multicast->always_listening();
+void main_backup(Multicast* multicast) {    
+    thread t_listener(&Multicast::always_listening, multicast);
+    thread t_heart_doctor(&Multicast::monitor_rm_heartbeat, multicast);
+    t_listener.join();
+    t_heart_doctor.join();
 }
 
 
