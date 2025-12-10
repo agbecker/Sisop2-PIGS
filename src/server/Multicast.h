@@ -8,8 +8,6 @@
 #include <thread>
 
 #define MCAST_IP "239.0.0.1"
-#define MC_DISCOVERY_ASK "ANYONE HERE OINK"
-#define MC_DISCOVERY_ACK "OINK OINK"
 
 #define HEARTBEAT "OINK OINK"
 #define HEARTBEAT_PERIOD 100
