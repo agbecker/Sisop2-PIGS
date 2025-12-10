@@ -135,9 +135,9 @@ void Multicast::always_listening() {
         std::string received_msg(buffer);
 
         if(received_msg[0] == HEARTBEAT[0]) {
-            mtx_heartbeat_counter->lock();
+            mtx_heartbeat_counter.lock();
             heartbeat_counter = 0;
-            mtx_heartbeat_counter->unlock();
+            mtx_heartbeat_counter.unlock();
         }
 
         else if(received_msg[0] == 'E') {
@@ -159,12 +159,12 @@ void Multicast::monitor_rm_heartbeat() {
             std::chrono::milliseconds(HEARTBEAT_PERIOD)
         );
 
-        mtx_heartbeat_counter->lock();
+        mtx_heartbeat_counter.lock();
         heartbeat_counter++;
 
         if (heartbeat_counter >= 3) {
             heartbeat_counter = 0; // evita múltiplos disparos
-            mtx_heartbeat_counter->unlock();
+            mtx_heartbeat_counter.unlock();
 
             //start_election();  // NÃO implementar agora
 
@@ -173,6 +173,6 @@ void Multicast::monitor_rm_heartbeat() {
             continue;
         }
 
-        mtx_heartbeat_counter->unlock();
+        mtx_heartbeat_counter.unlock();
     }
 }

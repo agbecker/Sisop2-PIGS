@@ -19,7 +19,7 @@ class Multicast {
         int sock;
         sockaddr_in group;
         int heartbeat_counter;
-        std::mutex *mtx_heartbeat_counter;
+        std::mutex mtx_heartbeat_counter;
         std::string newest_update;
 
     public:
