@@ -70,9 +70,8 @@ void main_manager(Multicast* multicast) {
 // Operações de uma réplica
 void main_backup(Multicast* multicast) {
     // Debug
-    cout << "As passivas reinam" << endl;
-    while(true);
-    return;
+    // cout << "As passivas reinam" << endl;
+    multicast->await_backup_data();
 }
 
 
