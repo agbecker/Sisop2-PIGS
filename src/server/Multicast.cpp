@@ -138,7 +138,8 @@ void Multicast::send_to_replicas(std::string data) {
 
 }
 
-void Multicast::await_backup_data() {
+// Escuta mensagens no multicast e encaminha pro tratamento correto
+void Multicast::always_listening() {
     char buffer[8192]; // tamanho razoável para JSON
 
     while (true) {
@@ -158,10 +159,17 @@ void Multicast::await_backup_data() {
             continue;
 
         buffer[n] = '\0';
-        std::string json_data(buffer);
+        std::string received_msg(buffer);
 
-        // Encaminha para atualização dos dados no backup
-        // update_client_data(json_data);
-        cout << buffer << endl;
+        if(received_msg == HEARTBEAT) {
+            // reset_heartbeat_counter();
+        }
+
+        else {
+
+            // Encaminha para atualização dos dados no backup
+            // update_client_data(json_data);
+            cout << buffer << endl;
+        }
     }
 }

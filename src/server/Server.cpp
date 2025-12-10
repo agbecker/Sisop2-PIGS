@@ -71,7 +71,7 @@ void main_manager(Multicast* multicast) {
 void main_backup(Multicast* multicast) {
     // Debug
     // cout << "As passivas reinam" << endl;
-    multicast->await_backup_data();
+    multicast->always_listening();
 }
 
 
