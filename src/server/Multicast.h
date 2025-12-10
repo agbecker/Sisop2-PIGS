@@ -6,6 +6,8 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <thread>
+#include <queue>
+#include <mutex>
 
 #define MCAST_IP "239.0.0.1"
 
@@ -21,12 +23,9 @@ class Multicast {
         Multicast() = default;
         void init();
         void find_others(bool* is_only_server);
-        void welcome_new_replicas();
         void heartbeat();
         void send_to_replicas(std::string data);
         void always_listening();
 };
-
-void send_ack(int sock, sockaddr_in target);
 
 #endif

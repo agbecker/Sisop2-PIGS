@@ -20,15 +20,6 @@
 
 #define BUFFER_SIZE 256
 
-struct ClientData {
-    std::string ip; // IP do cliente, usado como chave
-    int balance; // Saldo do cliente
-    int seq_num; // Último número de sequência registrado do cliente
-
-    ClientData(std::string i, int b, int s): ip(i), balance(b), seq_num(s) {};
-    ClientData(): ip("0.0.0.0"), balance(0), seq_num(-1) {};
-};
-
 class Process {
     private:
         std::map<std::string, ClientData> *clients; // Ponteiro para a lista de clientes
