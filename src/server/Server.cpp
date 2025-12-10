@@ -4,12 +4,39 @@ namespace fs = std::filesystem;
 
 int main(int argc, char **argv) {
     // Obtém porta
-    if(argc < 2) {
-        cout << "Informe o número de porta" << endl;
+    if(argc < 3) {
+        cout << "Informe o número de porta e o ID do processo" << endl;
         return 1;
     }
 
-    int port = stoi(argv[1]);
+    port = stoi(argv[1]);
+    id = stoi(argv[2]);
+
+    // Ingressa no multicast
+    Multicast* multicast = new Multicast();
+    multicast->init();
+
+    // Verifica se há outro servidor já conectado
+    multicast->find_others(&is_replica_manager);
+
+    if(is_replica_manager) {
+        main_manager(multicast);
+    }
+
+    else {
+        main_backup(multicast);
+    }
+
+    return 0;
+}
+
+// Operações do Replica Manager quando ele vem ao poder
+void main_manager(Multicast* multicast) {
+    // Thread de multicast para acolher novas réplicas
+    thread t_replica_discovery(&Multicast::welcome_new_replicas, multicast);
+
+    // Thread multicast para dar sinais de vida periódicos
+    thread t_heartbeat(&Multicast::heartbeat, multicast);
 
     // Thread para a interface do servidor
     initializeLogFile(transaction_history, TRANSACTION_HISTORY_FILEPATH);
@@ -37,7 +64,14 @@ int main(int argc, char **argv) {
     t_process.join();
     t_discovery.join(); 
 
-    return 0;
+    return;
+}
+
+// Operações de uma réplica
+void main_backup(Multicast* multicast) {
+    cout << "As passivas reinam" << endl;
+    while(true);
+    return;
 }
 
 
@@ -106,3 +140,4 @@ void initializeLogFile(std::fstream& handler, const std::string& logPath) {
         // std::cout << "Arquivo de log aberto com sucesso: " << PATH << std::endl;
     }
 }
+

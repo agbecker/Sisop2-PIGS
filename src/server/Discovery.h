@@ -33,6 +33,7 @@ class Discovery {
         void awaitRequest();
         std::queue<std::string>* clients_to_add;
         std::mutex* mutex_add_client;
+        void find_other_replicas(bool* is_replica_manager);
 };
 
 

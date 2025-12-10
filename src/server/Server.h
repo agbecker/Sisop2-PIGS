@@ -4,6 +4,7 @@
 #include "Discovery.h"
 #include "Process.h"
 #include "Interface.h"
+#include "Multicast.h"
 #include <string>
 #include <map>
 #include <queue>
@@ -25,7 +26,14 @@ ServerStats stats;
 
 std::fstream transaction_history;
 
+int port;
+int id;
+bool is_replica_manager;
+
 void add_clients();
 void initializeLogFile(std::fstream& handler, const std::string& logPath);
+
+void main_manager(Multicast* multicast);
+void main_backup(Multicast* multicast);
 
 #endif
