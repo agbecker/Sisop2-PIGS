@@ -66,6 +66,7 @@ void main_manager(Multicast* multicast) {
 
 // Operações de uma réplica
 void main_backup(Multicast* multicast) {
+    cout << "GAY" << endl;
     
     thread t_listener(&Multicast::always_listening, multicast);
     thread t_heart_doctor(&Multicast::monitor_rm_heartbeat, multicast);
