@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
     id = stoi(argv[2]);
 
     // Ingressa no multicast
-    Multicast* multicast = new Multicast();
+    Multicast* multicast(id);
     multicast->init();
 
     // Verifica se há outro servidor já conectado

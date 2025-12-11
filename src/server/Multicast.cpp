@@ -113,7 +113,7 @@ void Multicast::send_to_replicas(std::string data) {
 
 // Escuta mensagens no multicast e encaminha pro tratamento correto
 void Multicast::always_listening() {
-    char buffer[8192]; // tamanho razoável para JSON
+    char buffer[8192];
 
     while (true) {
         sockaddr_in sender{};
@@ -134,21 +134,61 @@ void Multicast::always_listening() {
         buffer[n] = '\0';
         std::string received_msg(buffer);
 
-        if(received_msg[0] == HEARTBEAT[0]) {
+        // HEARTBEAT
+        if(received_msg == HEARTBEAT) {
             mtx_heartbeat_counter.lock();
             heartbeat_counter = 0;
             mtx_heartbeat_counter.unlock();
+            continue;
         }
 
-        else if(received_msg[0] == 'E') {
-            // partake_in_election();
+        // ELECTION <id>
+        if (received_msg.rfind("ELECTION ", 0) == 0) {
+            int sender_id = std::stoi(received_msg.substr(9));
+            on_receive_election(sender_id);
+            continue;
         }
 
-        else {
-
-            // Encaminha para atualização dos dados no backup
-            newest_update = received_msg;
+        // OK <id>
+        if (received_msg.rfind("OK ", 0) == 0) {
+            int sender_id = std::stoi(received_msg.substr(3));
+            on_receive_ok(sender_id);
+            continue;
         }
+
+        // COORDINATOR <id>
+        if (received_msg.rfind("COORDINATOR ", 0) == 0) {
+            int leader_id = std::stoi(received_msg.substr(12));
+            on_receive_coordinator(leader_id);
+            continue;
+        }
+
+        // Atualização normal
+        newest_update = received_msg;
+    }
+}
+
+
+// Conta o número de períodos sem heartbeat, para detectar falha do RM
+void Multicast::monitor_rm_heartbeat() {
+    while (true) {
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(HEARTBEAT_PERIOD)
+        );
+
+        mtx_heartbeat_counter.lock();
+        heartbeat_counter++;
+
+        if (heartbeat_counter >= 3) {
+            heartbeat_counter = 0;
+            mtx_heartbeat_counter.unlock();
+
+            // Agora dispara o ciclo de eleição
+            start_election();
+            continue;
+        }
+
+        mtx_heartbeat_counter.unlock();
     }
 }
 
@@ -197,4 +237,74 @@ void Multicast::start_election() {
     if (sent < 0) {
         perror("sendto (start_election)");
     }
+}
+
+// Participa da eleição
+void Multicast::on_receive_election(int sender_id) {
+    // Ignorar mensagens minhas
+    if (sender_id == this->id)
+        return;
+
+    // Caso o remetente tenha ID menor que o meu:
+    // Sou mais forte → devo responder OK
+    if (sender_id < this->id) {
+
+        // Envia "OK <id>"
+        std::string ok_msg = "OK " + std::to_string(this->id);
+        ssize_t sent = sendto(
+            sock,
+            ok_msg.c_str(),
+            ok_msg.size(),
+            0,
+            (sockaddr*)&group,
+            sizeof(group)
+        );
+
+        if (sent < 0) {
+            perror("sendto (on_receive_election OK)");
+        }
+
+        // Se eu ainda não estou em eleição, começo a minha
+        if (!this->election_in_progress) {
+            this->start_election();
+        }
+
+        return;
+    }
+
+    // Caso o remetente tenha ID maior que o meu:
+    // Ele é mais forte → deixo que ele continue a eleição
+    if (sender_id > this->id) {
+        // Não faço nada: processo mais forte segue com a eleição
+        return;
+    }
+}
+
+
+void Multicast::on_receive_ok(int sender_id) {
+    // Ignora OKs enviados por mim mesmo se vazarem no multicast
+    if (sender_id == this->id)
+        return;
+
+    // Registra que recebeu OK de um processo mais forte
+    this->higher_response_received = true;
+
+    // Se eu estava esperando respostas da eleição, agora sei que não sou o mais forte
+    // Apenas aguardo COORDINATOR; não inicio nada e não me declaro líder
+}
+
+
+void Multicast::on_receive_coordinator(int new_leader_id) {
+    // Atualiza o novo coordenador conhecido
+    this->current_leader_id = new_leader_id;
+
+    // A eleição terminou
+    this->election_in_progress = false;
+    this->higher_response_received = false;
+
+    // Debug opcional
+    std::cout << "Novo coordenador é " << new_leader_id << std::endl;
+
+    // Se eu era o líder antigo ou estava me candidatando,
+    // agora eu apenas aceito o novo líder e continuo normal.
 }

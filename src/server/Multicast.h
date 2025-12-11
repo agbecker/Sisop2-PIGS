@@ -23,16 +23,20 @@ class Multicast {
         std::string newest_update;
         bool election_in_progress;
         bool higher_response_received;
+        int id;
 
     public:
-        Multicast(): heartbeat_counter(0), election_in_progress(false) {};
+        Multicast(int i):id(i), heartbeat_counter(0), election_in_progress(false), higher_response_received(false) {};
         void init();
         void find_others(bool* is_only_server);
         void heartbeat();
         void send_to_replicas(std::string data);
         void always_listening();
         void monitor_rm_heartbeat();
-        void start_election() 
+        void start_election();
+        void on_receive_election(int sender_id);
+        void on_receive_ok(int sender_id);
+        void on_receive_coordinator(int leader_id);
 };
 
 #endif
