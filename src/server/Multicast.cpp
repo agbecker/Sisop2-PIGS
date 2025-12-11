@@ -162,17 +162,39 @@ void Multicast::monitor_rm_heartbeat() {
         mtx_heartbeat_counter.lock();
         heartbeat_counter++;
 
-        if (heartbeat_counter >= 3) {
+        if (!election_in_progress && heartbeat_counter >= 3) {
             heartbeat_counter = 0; // evita múltiplos disparos
             mtx_heartbeat_counter.unlock();
 
-            //start_election();  // NÃO implementar agora
+            this->start_election();
 
             // Debug
-            cout << "MORREU" << endl;
+            // cout << "MORREU" << endl;
             continue;
         }
 
         mtx_heartbeat_counter.unlock();
+    }
+}
+
+// Inicia uma eleição
+void Multicast::start_election() {
+    if (sock < 0) return;
+    this->election_in_progress = true;
+    this->higher_response_received = false;
+
+    std::string msg = "ELECTION " + std::to_string(id);
+
+    ssize_t sent = sendto(
+        sock,
+        msg.c_str(),
+        msg.size(),
+        0,
+        (sockaddr*)&group,
+        sizeof(group)
+    );
+
+    if (sent < 0) {
+        perror("sendto (start_election)");
     }
 }

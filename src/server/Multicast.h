@@ -21,15 +21,18 @@ class Multicast {
         int heartbeat_counter;
         std::mutex mtx_heartbeat_counter;
         std::string newest_update;
+        bool election_in_progress;
+        bool higher_response_received;
 
     public:
-        Multicast(): heartbeat_counter(0) {};
+        Multicast(): heartbeat_counter(0), election_in_progress(false) {};
         void init();
         void find_others(bool* is_only_server);
         void heartbeat();
         void send_to_replicas(std::string data);
         void always_listening();
         void monitor_rm_heartbeat();
+        void start_election() 
 };
 
 #endif
