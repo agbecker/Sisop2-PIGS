@@ -20,6 +20,12 @@ void Process::run() {
         // Envia para o servidor
         string ack = sendToServer(message);
 
+        if (ack.empty()) {
+            // falha de conexão ou timeout
+            // evita crash ao ler o json (vazio)
+            continue;
+        }
+
         // Faz parsing da resposta
         json reply = json::parse(ack);
 
