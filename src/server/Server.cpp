@@ -1,6 +1,32 @@
 #include "Server.h"
 using namespace std;
+using json = nlohmann::json;
 namespace fs = std::filesystem;
+
+// Used to update data from the manager to new backups
+void update_clients(string json_str) {
+    try {
+        json j = json::parse(json_str);
+        if (j.contains("clients")) {
+            mutex_client_list.lock();
+            for (auto& element : j["clients"]) {
+                string ip = element["ip"];
+                int balance = element["balance"];
+                int seq = element["seq"];
+                
+                if (clients.find(ip) == clients.end()) {
+                    clients[ip] = ClientData(ip, balance, seq);
+                } else {
+                    clients[ip].balance = balance;
+                    clients[ip].seq_num = seq;
+                }
+            }
+            mutex_client_list.unlock();
+        }
+    } catch (exception& e) {
+        // Ignore parse errors
+    }
+}
 
 int main(int argc, char **argv) {
     // Obtém porta
@@ -13,18 +39,26 @@ int main(int argc, char **argv) {
     id = stoi(argv[2]);
 
     // Ingressa no multicast
-    Multicast* multicast = new Multicast();
+    Multicast* multicast = new Multicast(id);
     multicast->init();
 
     // Verifica se há outro servidor já conectado
     multicast->find_others(&is_replica_manager);
 
-    if(is_replica_manager) {
-        main_manager(multicast);
-    }
-
-    else {
-        main_backup(multicast);
+    while(true){
+        if(is_replica_manager) {
+            multicast->start_manager();
+            // roda enquanto for manager
+            main_manager(multicast);
+            //quando não for mais, troca de estado
+            is_replica_manager = false;
+        }
+        else {
+            multicast->start_backup();
+            //mesma coisa aqui
+            main_backup(multicast);
+            is_replica_manager = true;
+        }
     }
 
     return 0;
@@ -32,8 +66,22 @@ int main(int argc, char **argv) {
 
 // Operações do Replica Manager quando ele vem ao poder
 void main_manager(Multicast* multicast) {
+    cout << "=== I AM THE MANAGER ===" << endl;
+
+    // Quando um novo backup surge, ele pode pedir o estado atual dos clientes
+    // Usamos esse callback para isso
+    multicast->set_on_state_request([](){ 
+        mutex_client_list.lock();
+        string s = serialize_clients(&clients); 
+        mutex_client_list.unlock();
+        return s;
+    });
+
     // Thread multicast para dar sinais de vida periódicos
     thread t_heartbeat(&Multicast::heartbeat, multicast);
+
+    // Thread para ouvir mensagens de eleição de nós maiores
+    thread t_listener(&Multicast::always_listening, multicast);
 
     // Thread para a interface do servidor
     initializeLogFile(transaction_history, TRANSACTION_HISTORY_FILEPATH);
@@ -55,17 +103,27 @@ void main_manager(Multicast* multicast) {
     // Debug
     clients_to_add.push("1.2.3.4");
 
-    // Aguarda encerramento do programa
-    while(!t_discovery.joinable() && !t_process.joinable() && !t_discovery.joinable());
-    t_discovery.join();
-    t_process.join();
-    t_discovery.join(); 
+    // Aguarda encerramento do programa ou perda de liderança
+    while(multicast->is_manager()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+
+    if(t_heartbeat.joinable()) t_heartbeat.join();
+    if(t_listener.joinable()) t_listener.join();
+    
+    t_discovery.detach();
+    t_process.detach();
+    t_interface.detach();
+    t_add_clients.detach();
 
     return;
 }
 
 // Operações de uma réplica
 void main_backup(Multicast* multicast) {    
+    cout << "=== I AM A BACKUP ===" << endl;
+    multicast->set_on_update_received(update_clients);
+    multicast->request_state();
     thread t_listener(&Multicast::always_listening, multicast);
     thread t_heart_doctor(&Multicast::monitor_rm_heartbeat, multicast);
     t_listener.join();

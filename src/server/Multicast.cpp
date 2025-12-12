@@ -16,7 +16,8 @@ void Multicast::init() {
                &reuse, sizeof(reuse));
 
     // Configura que não recebe as próprias mensagens
-    int loop = 0; // 0 desativa, 1 ativa
+    // não faz muita diferença na implementação atual, mas ajuda a debugar
+    int loop = 1; // 0 desativa, 1 ativa
     setsockopt(sock, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
 
     sockaddr_in local{};
@@ -84,7 +85,8 @@ void Multicast::find_others(bool* is_only_server) {
 void Multicast::heartbeat() {
     const char* msg = HEARTBEAT;
 
-    while (true) {
+    // só envia enquanto for o manager
+    while (manager_running) {
         sendto(sock, msg, strlen(msg), 0,
                (sockaddr*)&group, sizeof(group));
 
@@ -115,18 +117,16 @@ void Multicast::send_to_replicas(std::string data) {
 void Multicast::always_listening() {
     char buffer[8192]; // tamanho razoável para JSON
 
-    while (true) {
+    struct timeval tv;
+    tv.tv_sec = 1;
+    tv.tv_usec = 0;
+    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
+
+    while (backup_running || manager_running) {
         sockaddr_in sender{};
         socklen_t sender_len = sizeof(sender);
 
-        ssize_t n = recvfrom(
-            sock,
-            buffer,
-            sizeof(buffer) - 1,
-            0,
-            (sockaddr*)&sender,
-            &sender_len
-        );
+        ssize_t n = recvfrom(sock, buffer, sizeof(buffer) - 1, 0, (sockaddr*)&sender, &sender_len);
 
         if (n <= 0)
             continue;
@@ -134,27 +134,55 @@ void Multicast::always_listening() {
         buffer[n] = '\0';
         std::string received_msg(buffer);
 
-        if(received_msg[0] == HEARTBEAT[0]) {
-            mtx_heartbeat_counter.lock();
-            heartbeat_counter = 0;
-            mtx_heartbeat_counter.unlock();
+        if(received_msg == HEARTBEAT){
+            if (backup_running) {
+                mtx_heartbeat_counter.lock();
+                heartbeat_counter = 0;
+                mtx_heartbeat_counter.unlock();
+            }
         }
-
-        else if(received_msg[0] == 'E') {
-            // partake_in_election();
+        else if(received_msg.rfind(MSG_ELECTION, 0) == 0){
+            int sender_id = stoi(received_msg.substr(string(MSG_ELECTION).length()));
+            partake_in_election(sender_id);
         }
+        else if(received_msg.rfind(MSG_ELECTION_OK, 0) == 0){
+            election_running = false;
+        }
+        else if(received_msg.rfind(MSG_ELECTION_COORDINATOR, 0) == 0){
+            int new_leader_id = stoi(received_msg.substr(string(MSG_ELECTION_COORDINATOR).length()));
+            
+            // Se alguém virou coordenador, a eleição acabou
+            election_running = false;
 
-        else {
+            if(new_leader_id == my_id){
+                if (backup_running) stop_backup();
+            }
+            else{
+                if (manager_running) stop_manager();
 
-            // Encaminha para atualização dos dados no backup
+                if (backup_running) {
+                    mtx_heartbeat_counter.lock();
+                    heartbeat_counter = 0;
+                    mtx_heartbeat_counter.unlock();
+                }
+            }
+        }
+        else if(received_msg.rfind(MSG_STATE_REQUEST, 0) == 0){
+            if(manager_running && on_state_request) {
+                string state_json = on_state_request();
+                send_to_replicas(state_json);
+            }
+        }
+        else{
             newest_update = received_msg;
+            if(on_update_received) on_update_received(received_msg);
         }
     }
 }
 
 // Conta o número de períodos sem heartbeat, para detectar falha do RM
 void Multicast::monitor_rm_heartbeat() {
-    while (true) {
+    while (backup_running) {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(HEARTBEAT_PERIOD)
         );
@@ -166,13 +194,61 @@ void Multicast::monitor_rm_heartbeat() {
             heartbeat_counter = 0; // evita múltiplos disparos
             mtx_heartbeat_counter.unlock();
 
-            //start_election();  // NÃO implementar agora
+            start_election();
 
             // Debug
-            cout << "MORREU" << endl;
+            // cout << "MORREU" << endl;
             continue;
         }
 
         mtx_heartbeat_counter.unlock();
     }
+}
+
+// Inicia uma eleição entre as réplicas
+// e cria uma thread para aguardar respostas
+void Multicast::start_election(){
+    if(election_running) return;
+    election_running = true;
+
+    string election_msg = MSG_ELECTION + to_string(my_id);    
+    send_to_replicas(election_msg);
+
+    // Thread para esperar respostas (Timeout)
+    thread t_timeout([this]() {
+        this_thread::sleep_for(chrono::seconds(2));
+
+        if (this->election_running) {
+            
+            // Ninguém maior respondeu (não recebi OK). fiz bullying com todos!
+            string coord_msg = MSG_ELECTION_COORDINATOR + to_string(this->my_id);
+            this->send_to_replicas(coord_msg);
+            
+            this->election_running = false;
+            this->stop_backup();
+        } else {
+            // fizram bullying comigo :(
+            cout << "I lost the election." << endl;
+        }
+    });
+    t_timeout.detach();
+}
+
+void Multicast::partake_in_election(int sender_id){
+    if(sender_id < my_id){
+        string ok_msg = MSG_ELECTION_OK + to_string(my_id);
+        send_to_replicas(ok_msg);
+        
+        if (manager_running) {
+             string coord_msg = MSG_ELECTION_COORDINATOR + to_string(my_id);
+             send_to_replicas(coord_msg);
+        } else {
+             start_election();
+        }
+    }
+}
+
+void Multicast::request_state() {
+    string msg = MSG_STATE_REQUEST;
+    send_to_replicas(msg);
 }
