@@ -30,7 +30,7 @@ struct ClientData {
 
 #define STARTING_BALANCE 1000
 
-#define TIMEOUT 10      // Tempo limite de time-out (em ms)
+#define TIMEOUT 100000      // Tempo limite de time-out (em us)
 
 #define DISCOVERY_ASK "WHERE IS SERVER OINK"
 #define DISCOVERY_REPLY "SERVER HERE OINK"
