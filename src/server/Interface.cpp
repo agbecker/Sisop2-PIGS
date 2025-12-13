@@ -40,7 +40,14 @@ void Interface::register_event(Event event) {
 
 void Interface::run() {
     while(true) {
-        while(events->empty()); // Aguarda ocorrer um evento
+        mtx_event->lock();
+        bool empty = events->empty();
+        mtx_event->unlock();
+        
+        if (empty) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            continue;
+        }
 
         // Acessa a fila e imprime
         mtx_event->lock();
