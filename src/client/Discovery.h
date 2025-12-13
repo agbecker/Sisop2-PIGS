@@ -16,6 +16,6 @@
 #define BUFFER_SIZE 256
 
 bool discoverServer(struct sockaddr_in &serv_addr);
-
+void awaitNewServer(in_addr* serv_addr);
 
 #endif

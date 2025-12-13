@@ -37,6 +37,9 @@ struct ClientData {
 
 #define TRANSACTION_HISTORY_FILEPATH "./log/transaction_history.log.txt"
 
+#define NEW_SERVER_MESSAGE "NEW SERVER HERE OINK"
+#define ACK_NEW_SERVER "ACK NEW SERVER OINK"
+
 // Armazena os dados numéricos do servidor em um dado momento
 typedef struct ServerStats
 {

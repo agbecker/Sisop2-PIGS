@@ -37,4 +37,6 @@ class Discovery {
         void update_clients_about_main(const std::vector<std::string> ips);
 };
 
+static void notify_client_new_server(const std::string& ip);
+
 #endif

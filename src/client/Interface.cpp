@@ -53,7 +53,7 @@ Command Interface::getCommand() {
 void Interface::printCommandResult() {
     int command_count = rr->seq_num;
     int new_balance = rr->value;
-    std::string server_ip = inet_ntoa(this->server_addr);
+    std::string server_ip = inet_ntoa(*(this->server_addr));
     std::string dest_ip = inet_ntoa(this->current_command.dest);
 
     if(rr->status == RR_OK) {
@@ -72,7 +72,7 @@ void Interface::printCommandResult() {
 
 void Interface::printInfo() {
     // Inicialização (ao descobrir o server)
-    string server_ip = inet_ntoa(this->server_addr);
+    string server_ip = inet_ntoa(*(this->server_addr));
     cout << current_time_format() << " server " << server_ip << endl;
 
     // Loop para resultados de requisições

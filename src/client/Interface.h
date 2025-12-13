@@ -23,7 +23,7 @@ typedef struct Command{
 class Interface {
     private:
         Command current_command;
-        struct in_addr server_addr; 
+        struct in_addr* server_addr; 
         void executeCommand(Command command);
         
         Command getCommand();
@@ -33,7 +33,7 @@ class Interface {
         RequestReply *rr;
 
     public: 
-        Interface(in_addr server_addr, RequestReply *r) : server_addr(server_addr), rr(r) { }
+        Interface(in_addr *server_addr, RequestReply *r) : server_addr(server_addr), rr(r) { }
         void run();
     };
 

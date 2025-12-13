@@ -87,51 +87,86 @@ string Process::sendToServer(string request) {
     struct sockaddr_in server;
     char buf[BUFFER_SIZE];
 
-    // Inicializa socket
-    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
-		perror("ERROR opening socket");
+    // Cria socket
+    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sockfd < 0) {
+        perror("ERROR opening socket");
         rr->status = RR_CONNECT;
         return "";
     }
 
-    // Configura timeout para recvfrom
+    // Timeout para recvfrom
     struct timeval tv;
     tv.tv_sec = 0;
     tv.tv_usec = TIMEOUT;
     if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
         perror("setsockopt timeout");
         close(sockfd);
+        rr->status = RR_CONNECT;
         return "";
     }
 
-    // Prepara conexão
-    server.sin_family = AF_INET;     
-	server.sin_port = htons(port);
-    server.sin_addr = this->serv_addr;
+    // Parte fixa do endereço
+    server.sin_family = AF_INET;
+    server.sin_port   = htons(port);
 
-    // Envia
-    n = -1;
-    while(n < 0){
+    in_addr last_server{};
+    bool has_last = false;
+
+    while (true) {
+        // Sempre lê o IP atual do servidor
+        in_addr current_server = *serv_addr;
+
+        // Detecta troca de servidor durante retry
+        if (has_last && current_server.s_addr != last_server.s_addr) {
+            // Não faz nada especial além de aceitar a troca
+            // Sequência já é protegida em nível superior
+        }
+
+        last_server = current_server;
+        has_last = true;
+
+        server.sin_addr = current_server;
+
         // Prepara mensagem
         bzero(buf, BUFFER_SIZE);
-        strcpy(buf,request.c_str());
+        strcpy(buf, request.c_str());
 
-        n = sendto(sockfd, buf, BUFFER_SIZE, 0, (const struct sockaddr *) &server, sizeof(struct sockaddr_in));
+        // Envia
+        n = sendto(
+            sockfd,
+            buf,
+            BUFFER_SIZE,
+            0,
+            (struct sockaddr*)&server,
+            sizeof(server)
+        );
+
         if (n < 0) {
             perror("ERROR sendto");
             rr->status = RR_CONNECT;
+            close(sockfd);
             return "";
         }
 
+        // Aguarda resposta
         n = recvfrom(sockfd, buf, BUFFER_SIZE, 0, nullptr, nullptr);
-        if (n < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
-            perror("ERROR recvfrom");
-            rr->status = RR_CONNECT;
-            return "";
+
+        if (n > 0) {
+            // Sucesso
+            close(sockfd);
+            return string(buf);
         }
-    }  
 
-    close(sockfd);
+        // Timeout → retry
+        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+            continue;
+        }
 
-    return buf;
+        // Erro real
+        perror("ERROR recvfrom");
+        rr->status = RR_CONNECT;
+        close(sockfd);
+        return "";
+    }
 }

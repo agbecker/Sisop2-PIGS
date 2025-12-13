@@ -59,3 +59,77 @@ bool discoverServer(struct sockaddr_in &serv_addr) {
     return true;
 
 }
+
+void awaitNewServer(in_addr* serv_addr) {
+    int sockfd;
+    char buf[BUFFER_SIZE];
+    struct sockaddr_in local_addr{}, from_addr{};
+    socklen_t from_len = sizeof(from_addr);
+
+    // Cria socket UDP
+    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sockfd < 0) {
+        perror("ERROR opening discovery socket");
+        return;
+    }
+
+    // Permite broadcast
+    int bc_enable = 1;
+    if (setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &bc_enable, sizeof(bc_enable)) < 0) {
+        perror("ERROR enabling broadcast");
+        close(sockfd);
+        return;
+    }
+
+    // Bind na porta de discovery
+    local_addr.sin_family = AF_INET;
+    local_addr.sin_port = htons(BROADCAST_PORT);
+    local_addr.sin_addr.s_addr = INADDR_ANY;
+    bzero(&(local_addr.sin_zero), 8);
+
+    if (bind(sockfd, (struct sockaddr*)&local_addr, sizeof(local_addr)) < 0) {
+        perror("ERROR binding discovery socket");
+        close(sockfd);
+        return;
+    }
+
+    while (true) {
+        bzero(buf, BUFFER_SIZE);
+
+        int n = recvfrom(
+            sockfd,
+            buf,
+            BUFFER_SIZE,
+            0,
+            (struct sockaddr*)&from_addr,
+            &from_len
+        );
+
+        if (n < 0) {
+            perror("ERROR recvfrom (discovery)");
+            continue;
+        }
+
+        string msg(buf);
+
+        // Ignora mensagens irrelevantes
+        if (msg != NEW_SERVER_MESSAGE)
+            continue;
+
+        // Atualiza servidor atual
+        *serv_addr = from_addr.sin_addr;
+
+        // Envia ACK
+        const char ack[] = ACK_NEW_SERVER;
+        sendto(
+            sockfd,
+            ack,
+            strlen(ack),
+            0,
+            (struct sockaddr*)&from_addr,
+            from_len
+        );
+    }
+
+    close(sockfd);
+}

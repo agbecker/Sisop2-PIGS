@@ -18,17 +18,21 @@ int main(int argc, char **argv) {
     // Define o RequestReply para comunicação entre threads
     RequestReply rr;
 
+    // Thread de discovery contínuo (novo servidor)
+    thread t_discovery(awaitNewServer, &serv_addr.sin_addr);
+
     // Inicia thread de Interface
-    Interface interface(serv_addr.sin_addr, &rr);
+    Interface interface(&serv_addr.sin_addr, &rr);
     thread t_interface(&Interface::run, &interface);
 
     // Inicia thread de Process
-    Process process(port, serv_addr.sin_addr, &rr);
+    Process process(port, &serv_addr.sin_addr, &rr);
     thread t_process(&Process::run, &process);
 
     while(!t_interface.joinable() and !t_process.joinable());
     t_interface.join();
     t_process.join();
+    t_discovery.join();
 
     return 0;
 }
