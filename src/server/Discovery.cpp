@@ -53,6 +53,19 @@ void Discovery::awaitRequest() {
         return;
     }
 
+    // Configura socket para permitir reuso de endereço e porta
+    int reuse = 1;
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
+        perror("ERROR enabling SO_REUSEADDR");
+        close(sockfd);
+        return;
+    }
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT, &reuse, sizeof(reuse)) < 0) {
+        perror("ERROR enabling SO_REUSEPORT");
+        close(sockfd);
+        return;
+    }
+
     // Faz bind no socket à porta
     if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(struct sockaddr)) < 0) {
 		perror("ERROR on binding");
@@ -106,7 +119,7 @@ static void notify_client_new_server(const std::string& ip) {
 
     struct sockaddr_in cli_addr{};
     cli_addr.sin_family = AF_INET;
-    cli_addr.sin_port = htons(BROADCAST_PORT);
+    cli_addr.sin_port = htons(NOTIFICATION_PORT);
     inet_aton(ip.c_str(), &cli_addr.sin_addr);
 
     while (true) {

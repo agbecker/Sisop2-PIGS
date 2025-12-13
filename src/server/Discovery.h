@@ -18,6 +18,7 @@
 #include "../Utils.h"
 
 #define BROADCAST_PORT 4000
+#define NOTIFICATION_PORT 4001
 #define BUFFER_SIZE 256
 
 class Discovery {

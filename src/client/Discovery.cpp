@@ -81,9 +81,22 @@ void awaitNewServer(in_addr* serv_addr) {
         return;
     }
 
+    // Configura socket para permitir reuso de endereço e porta
+    int reuse = 1;
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
+        perror("ERROR enabling SO_REUSEADDR");
+        close(sockfd);
+        return;
+    }
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT, &reuse, sizeof(reuse)) < 0) {
+        perror("ERROR enabling SO_REUSEPORT");
+        close(sockfd);
+        return;
+    }
+
     // Bind na porta de discovery
     local_addr.sin_family = AF_INET;
-    local_addr.sin_port = htons(BROADCAST_PORT);
+    local_addr.sin_port = htons(NOTIFICATION_PORT);
     local_addr.sin_addr.s_addr = INADDR_ANY;
     bzero(&(local_addr.sin_zero), 8);
 
