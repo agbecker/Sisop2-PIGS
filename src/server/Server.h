@@ -12,6 +12,7 @@
 #include <thread>
 #include <chrono>
 #include <mutex>
+#include <vector>
 
 std::map<std::string, ClientData> clients;
 std::mutex mutex_client_list;
@@ -35,5 +36,7 @@ void initializeLogFile(std::fstream& handler, const std::string& logPath);
 
 void main_manager(Multicast* multicast);
 void main_backup(Multicast* multicast);
+
+std::vector<std::string> list_client_ips();
 
 #endif

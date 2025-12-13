@@ -81,3 +81,48 @@ void Discovery::awaitRequest() {
 
 }
 
+// Informa a todos os clientes sobre o novo servidor principal
+void Discovery::update_clients_about_main(const std::vector<std::string> ips) {
+    for (const auto& ip : ips) {
+        std::thread([ip]() {
+            int sock = socket(AF_INET, SOCK_DGRAM, 0);
+            if (sock < 0) {
+                perror("socket");
+                return;
+            }
+
+            // Timeout de 1 segundo para recv
+            struct timeval tv;
+            tv.tv_sec = 1;
+            tv.tv_usec = 0;
+            setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+
+            struct sockaddr_in cli_addr{};
+            cli_addr.sin_family = AF_INET;
+            cli_addr.sin_port = htons(BROADCAST_PORT);
+            inet_aton(ip.c_str(), &cli_addr.sin_addr);
+
+            const char msg[] = "NEW SERVER OINK";
+            char buf[BUFFER_SIZE];
+
+            while (true) {
+                // Envia mensagem
+                sendto(sock, msg, strlen(msg), 0,
+                       (struct sockaddr*)&cli_addr, sizeof(cli_addr));
+
+                // Aguarda ACK
+                socklen_t len = sizeof(cli_addr);
+                int n = recvfrom(sock, buf, BUFFER_SIZE, 0,
+                                 (struct sockaddr*)&cli_addr, &len);
+
+                if (n > 0) {
+                    // Recebeu ACK
+                    break;
+                }
+                // Timeout → reenvia
+            }
+
+            close(sock);
+        }).detach();
+    }
+}

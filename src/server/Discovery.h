@@ -6,6 +6,7 @@
 #include <thread>
 #include <queue>
 #include <mutex>
+#include <vector>
 
 // Bibliotecas para conexão
 #include <cstring>
@@ -33,9 +34,7 @@ class Discovery {
         void awaitRequest();
         std::queue<std::string>* clients_to_add;
         std::mutex* mutex_add_client;
-        void find_other_replicas(bool* is_replica_manager);
+        void update_clients_about_main(const std::vector<std::string> ips);
 };
-
-
 
 #endif

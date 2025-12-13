@@ -94,7 +94,12 @@ void main_manager(Multicast* multicast) {
 
     // Thread para descoberta de novos clientes
     Discovery discovery(clients_to_add, mutex_new_clients);
+    vector<string> client_ips = list_client_ips();
     thread t_discovery(&Discovery::awaitRequest, &discovery);
+    
+    // Thread para informar aos clientes quem é o novo principal
+    thread t_update_clients(&Discovery::update_clients_about_main, &discovery, client_ips);
+    t_update_clients.detach();
 
     // Thread para processamento de requisições
     Process process(port, &clients, &mutex_client_list, &events, &mtx_events, &stats, multicast);
@@ -197,3 +202,16 @@ void initializeLogFile(std::fstream& handler, const std::string& logPath) {
     }
 }
 
+// Cria lista com os IPs de todos os clientes
+vector<std::string> list_client_ips() {
+    mutex_client_list.lock();
+    std::vector<std::string> ips;
+    ips.reserve(clients.size());
+
+    for (const auto& [_, data] : clients) {
+        ips.push_back(data.ip);
+    }
+    mutex_client_list.unlock();
+
+    return ips;
+}
