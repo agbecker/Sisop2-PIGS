@@ -119,7 +119,7 @@ void Process::processTransaction(string message, struct sockaddr_in cli_addr) {
     mtx_events->unlock();
 
     // Envia dados atualizados para as réplicas
-    string serialized_data = serialize_clients(clients);
+    string serialized_data = serialize_server_data(clients, stats);
     thread t_mcast_clients(&Multicast::send_to_replicas, multicast, serialized_data);
     t_mcast_clients.detach();
 
@@ -164,8 +164,8 @@ void Process::sendReply(struct sockaddr_in cli_addr, int status, int new_balance
 }
 
 // Transforma todas as informações de clientes em JSON para enviar para as réplicas
-std::string serialize_clients(
-    const std::map<std::string, ClientData>* clients)
+std::string serialize_server_data(
+    const std::map<std::string, ClientData>* clients, const ServerStats* stats)
 {
     std::string json = "{\"clients\":[";
     bool first = true;
@@ -174,6 +174,7 @@ std::string serialize_clients(
         if (!first) json += ",";
         first = false;
 
+        // é IMPOSSIVEL não ter um jeito melhor de fazer isso
         json += "{";
         json += "\"ip\":\"" + c.ip + "\",";
         json += "\"balance\":" + std::to_string(c.balance) + ",";
@@ -181,6 +182,12 @@ std::string serialize_clients(
         json += "}";
     }
 
-    json += "]}";
+    json += "],";
+    json += "\"stats\":{";
+    json += "\"num_clients\":" + std::to_string(stats->num_clients) + ",";
+    json += "\"total_transferred\":" + std::to_string(stats->total_transferred) + ",";
+    json += "\"num_transactions\":" + std::to_string(stats->num_transactions);
+    json += "}}";
+
     return json;
 }

@@ -1,16 +1,6 @@
 #include "Interface.h"
+#include "../Utils.h"
 using namespace std;
-
-inline std::string current_time_format() {
-    auto now = std::chrono::system_clock::now();
-    auto time_type = std::chrono::system_clock::to_time_t(now);
-    auto *local_time = std::localtime(&time_type);
-
-    std::stringstream string_stream;
-    string_stream << std::put_time(local_time, "%Y-%m-%d %H:%M:%S");
-
-    return string_stream.str();
-}
 
 void Interface::show_stats(bool duplicate, ServerStats stats) {
     // Mostra dados do servidor
@@ -49,9 +39,6 @@ void Interface::register_event(Event event) {
 }
 
 void Interface::run() {
-    // Impressão de inicialização
-    cout << current_time_format() << " num_transactions " << 0 << " total_transferred " << 0 << " total_balance " << 0 << endl;
-
     while(true) {
         while(events->empty()); // Aguarda ocorrer um evento
 

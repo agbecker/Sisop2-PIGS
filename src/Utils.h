@@ -1,6 +1,10 @@
 #ifndef UTILS_H
 #define UTILS_H
+
 #include <string>
+#include <sstream>
+#include <iomanip>
+#include <chrono>
 
 // Struct usada para comunicação entre threads do cliente
 typedef struct RequestReply
@@ -59,5 +63,17 @@ typedef struct Event
     ServerStats stats;
     Event(int v, int n, std::string o, std::string d, bool dp, ServerStats st): value(v), seq_num(n), origin(o), destination(d), duplicate(dp), stats(st) {};
 } Event;
+
+
+inline std::string current_time_format() {
+    auto now = std::chrono::system_clock::now();
+    auto time_type = std::chrono::system_clock::to_time_t(now);
+    auto *local_time = std::localtime(&time_type);
+
+    std::stringstream string_stream;
+    string_stream << std::put_time(local_time, "%Y-%m-%d %H:%M:%S");
+
+    return string_stream.str();
+}
 
 #endif

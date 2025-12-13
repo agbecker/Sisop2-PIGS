@@ -1,4 +1,6 @@
 #include "Interface.h"
+#include "../Utils.h"
+
 using namespace std;
 
 bool ipv4IsValid(const std::string& ipAddress) {
@@ -7,17 +9,6 @@ bool ipv4IsValid(const std::string& ipAddress) {
     const std::regex ipv4Regex("^" + reg + "\\." + reg + "\\." + reg + "\\." + reg + "$");
 
     return std::regex_match(ipAddress, ipv4Regex);
-}
-
-inline std::string current_time_format() {
-    auto now = std::chrono::system_clock::now();
-    auto time_type = std::chrono::system_clock::to_time_t(now);
-    auto *local_time = std::localtime(&time_type);
-
-    std::stringstream string_stream;
-    string_stream << std::put_time(local_time, "%Y-%m-%d %H:%M:%S");
-
-    return string_stream.str();
 }
 
 Command Interface::getCommand() {

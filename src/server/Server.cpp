@@ -23,6 +23,11 @@ void update_clients(string json_str) {
             }
             mutex_client_list.unlock();
         }
+        if (j.contains("stats")) {
+            stats.num_clients = j["stats"]["num_clients"];
+            stats.total_transferred = j["stats"]["total_transferred"];
+            stats.num_transactions = j["stats"]["num_transactions"];
+        }
     } catch (exception& e) {
         // Ignore parse errors
     }
@@ -68,11 +73,18 @@ int main(int argc, char **argv) {
 void main_manager(Multicast* multicast) {
     cout << "=== I AM THE MANAGER ===" << endl;
 
+     // Impressão de inicialização
+    const int num_transactions = stats.num_transactions;
+    const long unsigned int total_transferred = stats.total_transferred;
+    const long unsigned int total_balance = stats.num_clients * STARTING_BALANCE;
+    
+    cout << current_time_format() << " num_transactions " << num_transactions << " total_transferred " << total_transferred << " total_balance " << total_balance << endl;
+
     // Quando um novo backup surge, ele pode pedir o estado atual dos clientes
     // Usamos esse callback para isso
     multicast->set_on_state_request([](){ 
         mutex_client_list.lock();
-        string s = serialize_clients(&clients); 
+        string s = serialize_server_data(&clients, &stats); 
         mutex_client_list.unlock();
         return s;
     });

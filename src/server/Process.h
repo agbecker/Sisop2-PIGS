@@ -38,6 +38,7 @@ class Process {
 
 };
 
-std::string serialize_clients(const std::map<std::string, ClientData>* clients);
+std::string serialize_server_data(
+    const std::map<std::string, ClientData>* clients, const ServerStats* stats);
 
 #endif
