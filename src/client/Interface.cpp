@@ -16,8 +16,28 @@ Command Interface::getCommand() {
     std::string addr;
     
     while (true) {
-        std::cin >> addr >> cmd.amount;
+        std::cin >> addr;
         
+        if(std::cin.fail()) {
+            if(std::cin.eof()) {
+                exit(0);
+            }
+            std::cin.clear(); // limpa o estado de erro
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // limpa o buffer
+            std::cerr << current_time_format() << " | Invalid input format. Try again." << "\n";
+            continue;
+        }
+
+        if (addr == "0") {
+            cmd.amount = 0;
+            cmd.dest.s_addr = 0;
+            std::string dummy;
+            std::getline(std::cin, dummy);
+            return cmd;
+        }
+        
+        std::cin >> cmd.amount;
+
         if(std::cin.fail()) {
             if(std::cin.eof()) {
                 exit(0);
